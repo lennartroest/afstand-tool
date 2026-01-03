@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adres Afstand Tool - Nederland</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
+    <style>
+        :root {
+            --dark-teal: #2C5F6B;
+            --medium-teal: #3A6B7A;
+            --light-turquoise: #4ECDC4;
+            --bright-turquoise: #5FB3B3;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --gray: #666;
+            --dark-gray: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            color: var(--dark-teal);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .header p {
+            color: var(--gray);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: var(--dark-teal);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light-turquoise);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--light-turquoise);
+        }
+
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--light-turquoise);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 95, 107, 0.4);
+            background: linear-gradient(135deg, var(--medium-teal) 0%, var(--dark-teal) 100%);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-gray);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: 600px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .address-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .address-item {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+
+        .address-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 5px;
+        }
+
+        .address-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .address-item-address {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .address-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .distance-table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .distance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .distance-table th {
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .distance-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .distance-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .distance-table tr.closest {
+            background: rgba(78, 205, 196, 0.15);
+            font-weight: 600;
+        }
+
+        .distance-value {
+            font-weight: 600;
+            color: var(--dark-teal);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .map-container {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.png" alt="Consult Zorg Logo" class="logo" onerror="this.style.display='none'">
+            <div class="header-content">
+                <h1>🗺️ Adres Afstand Tool</h1>
+                <p>Bekijk de afstanden tussen adressen op een kaart van Nederland</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Nieuw Adres Formulier -->
+            <div class="card search-section">
+                <h2>🔍 Nieuw Adres Opzoeken</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end;">
+                    <div class="form-group">
+                        <label for="searchAddressName">Naam/Label:</label>
+                        <input type="text" id="searchAddressName" placeholder="Bijv: Mijn Locatie">
+                    </div>
+                    <div class="form-group">
+                        <label for="searchAddress">Adres:</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="searchAddress" placeholder="Straat, postcode, plaats" autocomplete="off">
+                            <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="searchNewAddress()">Zoek Adres</button>
+                </div>
+                <div id="searchMessage"></div>
+            </div>
+
+            <!-- Kaart Container -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <!-- Afstand Tabel -->
+            <div class="distance-table-container">
+                <h2>📊 Afstanden</h2>
+                <div id="distanceTableContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Voer een nieuw adres in om afstanden te zien</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adresbeheer Card -->
+            <div class="card">
+                <h2>📍 Adresbeheer</h2>
+                
+                <!-- Excel Upload Sectie -->
+                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">📁 Excel Bestand Uploaden</h3>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
+                        Upload een Excel bestand met 2 kolommen: <strong>Naam/Label</strong> en <strong>Volledig Adres</strong>
+                    </p>
+                    <div class="form-group">
+                        <label for="excelFile">Selecteer Excel bestand (.xlsx of .xls):</label>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 8px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadExcelFile()" id="uploadBtn">
+                        📤 Upload en Importeer Adressen
+                    </button>
+                    <div id="excelUploadMessage"></div>
+                    <div id="excelProgress" style="margin-top: 15px; display: none;">
+                        <div style="background: #e0e0e0; border-radius: 8px; height: 20px; overflow: hidden;">
+                            <div id="excelProgressBar" style="background: var(--light-turquoise); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                        <p id="excelProgressText" style="margin-top: 5px; color: var(--gray); font-size: 0.9rem;"></p>
+                    </div>
+                </div>
+
+                <!-- Handmatig Adres Toevoegen -->
+                <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">✏️ Handmatig Adres Toevoegen</h3>
+                <div class="form-group">
+                    <label for="addressName">Naam/Label:</label>
+                    <input type="text" id="addressName" placeholder="Bijv: Kantoor Amsterdam">
+                </div>
+                <div class="form-group">
+                    <label for="addressFull">Volledig Adres:</label>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="addressFull" placeholder="Straat, huisnummer, postcode, plaats" autocomplete="off">
+                        <div id="autocompleteDropdownAdd" class="autocomplete-dropdown"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addNewAddress()">Adres Toevoegen</button>
+                <div id="addressMessage"></div>
+            </div>
+
+            <!-- Opgeslagen Adressen Card -->
+            <div class="card">
+                <h2>💾 Opgeslagen Adressen</h2>
+                <div id="savedAddressesList" class="address-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📍</div>
+                        <p>Nog geen adressen opgeslagen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- SheetJS voor Excel parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Adresbeheer Module -->
+    <script src="addressManager.js"></script>
+    
+    <script>
+        // Initialiseer adresbeheer
+        const addressManager = new AddressManager();
+        
+        // Initialiseer kaart (centrum van Nederland)
+        const map = L.map('map').setView([52.1326, 5.2913], 7);
+        
+        // Voeg kaartlaag toe
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        let savedMarkers = [];
+        let searchMarker = null;
+        let closestMarker = null;
+        let distanceLines = [];
+        let autocompleteTimeout = null;
+        let currentAutocompleteDropdown = null;
+
+        /**
+         * Zoek adres suggesties voor autocomplete
+         */
+        async function searchAddressSuggestions(query) {
+            if (query.length < 3) {
+                return [];
+            }
+
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Nederland')}&limit=5&addressdetails=1`,
+                    {
+                        headers: {
+                            'User-Agent': 'AdresAfstandTool/1.0'
+                        }
+                    }
+                );
+                const data = await response.json();
+                return data || [];
+            } catch (error) {
+                console.error('Autocomplete fout:', error);
+                return [];
+            }
+        }
+
+        /**
+         * Toon autocomplete dropdown
+         */
+        function showAutocomplete(suggestions, inputId, dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            if (!suggestions || suggestions.length === 0) {
+                dropdown.classList.remove('show');
+                return;
+            }
+
+            let html = '';
+            suggestions.forEach(suggestion => {
+                const displayName = suggestion.display_name.split(', Nederland')[0];
+                html += `
+                    <div class="autocomplete-item" onclick="selectAutocomplete('${displayName.replace(/'/g, "\\'")}', '${inputId}')">
+                        ${displayName}
+                    </div>
+                `;
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+            currentAutocompleteDropdown = dropdownId;
+        }
+
+        /**
+         * Selecteer een autocomplete suggestie
+         */
+        function selectAutocomplete(value, inputId) {
+            document.getElementById(inputId).value = value;
+            document.getElementById(currentAutocompleteDropdown === 'autocompleteDropdown' ? 'autocompleteDropdown' : 'autocompleteDropdownAdd').classList.remove('show');
+            currentAutocompleteDropdown = null;
+        }
+
+        /**
+         * Setup autocomplete voor een input veld
+         */
+        function setupAutocomplete(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+
+            input.addEventListener('input', async (e) => {
+                const query = e.target.value.trim();
+                
+                if (autocompleteTimeout) {
+                    clearTimeout(autocompleteTimeout);
+                }
+
+                if (query.length < 3) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+
+                autocompleteTimeout = setTimeout(async () => {
+                    const suggestions = await searchAddressSuggestions(query);
+                    showAutocomplete(suggestions, inputId, dropdownId);
+                }, 300);
+            });
+
+            // Sluit dropdown bij klik buiten
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        /**
+         * Bereken afstand tussen twee coördinaten (Haversine formule)
+         */
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Straal van de aarde in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        /**
+         * Geocode een adres naar coördinaten
+         */
+        async function geocodeAddress(addressString) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressString + ', Nederland')}&limit=1`,
+                    {
+                        headers: {
+                            'User-Agent': 'AdresAfstandTool/1.0'
+                        }
+                    }
+                );
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    return {
+                        lat: parseFloat(data[0].lat),
+                        lon: parseFloat(data[0].lon),
+                        displayName: data[0].display_name
+                    };
+                }
+                return null;
+            } catch (error) {
+                console.error('Geocoding fout:', error);
+                return null;
+            }
+        }
+
+        /**
+         * Maak een marker icoon
+         */
+        function createMarkerIcon(color = '#2C5F6B', isClosest = false) {
+            const size = isClosest ? 20 : 15;
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    width: ${size}px;
+                    height: ${size}px;
+                    background-color: ${color};
+                    border: 3px solid white;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    ${isClosest ? 'animation: pulse 2s infinite;' : ''}
+                "></div>`,
+                iconSize: [size, size],
+                iconAnchor: [size / 2, size / 2]
+            });
+        }
+
+        /**
+         * Update de kaart met opgeslagen adressen
+         */
+        function updateMap() {
+            // Verwijder oude markers
+            savedMarkers.forEach(marker => map.removeLayer(marker));
+            savedMarkers = [];
+
+            const addresses = addressManager.getAllAddresses();
+            
+            addresses.forEach(address => {
+                if (address.latitude && address.longitude) {
+                    const marker = L.marker([address.latitude, address.longitude], {
+                        icon: createMarkerIcon('#2C5F6B')
+                    }).addTo(map);
+                    
+                    marker.bindPopup(`
+                        <strong>${address.naam || 'Geen naam'}</strong><br>
+                        ${addressManager.getFullAddressString(address)}
+                    `);
+                    
+                    savedMarkers.push(marker);
+                }
+            });
+
+            // Pas zoom aan als er markers zijn
+            if (savedMarkers.length > 0) {
+                const group = new L.featureGroup(savedMarkers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        /**
+         * Parse adres string naar componenten
+         */
+        function parseAddressString(addressString) {
+            // Probeer adres te parsen (eenvoudige versie)
+            // Format: "Straat Huisnummer, Postcode Plaats" of variaties
+            const parts = addressString.split(',').map(p => p.trim());
+            
+            let straat = '';
+            let huisnummer = '';
+            let postcode = '';
+            let plaats = '';
+
+            if (parts.length >= 2) {
+                // Er is een komma, dus waarschijnlijk "Straat Huisnummer, Postcode Plaats"
+                const streetPart = parts[0];
+                const postcodeCityPart = parts[1];
+
+                // Parse straat en huisnummer
+                const streetMatch = streetPart.match(/^(.+?)\s+(\d+[a-zA-Z]?)$/);
+                if (streetMatch) {
+                    straat = streetMatch[1].trim();
+                    huisnummer = streetMatch[2].trim();
+                } else {
+                    straat = streetPart;
+                }
+
+                // Parse postcode en plaats
+                const postcodeMatch = postcodeCityPart.match(/^(\d{4}\s?[A-Z]{2})\s+(.+)$/);
+                if (postcodeMatch) {
+                    postcode = postcodeMatch[1].trim();
+                    plaats = postcodeMatch[2].trim();
+                } else {
+                    plaats = postcodeCityPart;
+                }
+            } else {
+                // Geen komma, probeer alles te parsen
+                const postcodeMatch = addressString.match(/(\d{4}\s?[A-Z]{2})/);
+                if (postcodeMatch) {
+                    postcode = postcodeMatch[1].trim();
+                    const beforePostcode = addressString.substring(0, postcodeMatch.index).trim();
+                    const afterPostcode = addressString.substring(postcodeMatch.index + postcodeMatch[0].length).trim();
+                    
+                    const streetMatch = beforePostcode.match(/^(.+?)\s+(\d+[a-zA-Z]?)$/);
+                    if (streetMatch) {
+                        straat = streetMatch[1].trim();
+                        huisnummer = streetMatch[2].trim();
+                    } else {
+                        straat = beforePostcode;
+                    }
+                    
+                    plaats = afterPostcode;
+                } else {
+                    straat = addressString;
+                }
+            }
+
+            return { straat, huisnummer, postcode, plaats };
+        }
+
+        /**
+         * Voeg een nieuw adres toe
+         */
+        async function addNewAddress() {
+            const naam = document.getElementById('addressName').value.trim();
+            const fullAddressInput = document.getElementById('addressFull').value.trim();
+
+            if (!fullAddressInput) {
+                showMessage('addressMessage', 'Vul een adres in', 'error');
+                return;
+            }
+
+            const { straat, huisnummer, postcode, plaats } = parseAddressString(fullAddressInput);
+            
+            showMessage('addressMessage', 'Adres wordt gegeocodeerd...', 'loading');
+            
+            const geocodeResult = await geocodeAddress(fullAddressInput);
+            
+            if (!geocodeResult) {
+                showMessage('addressMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
+                return;
+            }
+
+            const newAddress = addressManager.addAddress({
+                naam,
+                straat,
+                huisnummer,
+                postcode,
+                plaats,
+                latitude: geocodeResult.lat,
+                longitude: geocodeResult.lon
+            });
+
+            // Reset formulier
+            document.getElementById('addressName').value = '';
+            document.getElementById('addressFull').value = '';
+
+            showMessage('addressMessage', 'Adres succesvol toegevoegd!', 'success');
+            updateSavedAddressesList();
+            updateMap();
+        }
+
+        /**
+         * Zoek een nieuw adres en bereken afstanden
+         */
+        async function searchNewAddress() {
+            const addressString = document.getElementById('searchAddress').value.trim();
+            const naam = document.getElementById('searchAddressName').value.trim() || 'Nieuw Adres';
+
+            if (!addressString) {
+                showMessage('searchMessage', 'Voer een adres in', 'error');
+                return;
+            }
+
+            showMessage('searchMessage', 'Adres wordt opgezocht...', 'loading');
+
+            const geocodeResult = await geocodeAddress(addressString);
+            
+            if (!geocodeResult) {
+                showMessage('searchMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
+                return;
+            }
+
+            // Verwijder oude search marker en lijnen
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+            distanceLines.forEach(line => map.removeLayer(line));
+            distanceLines = [];
+
+            // Reset closest marker styling
+            if (closestMarker) {
+                closestMarker.setIcon(createMarkerIcon('#2C5F6B'));
+            }
+
+            // Voeg nieuwe search marker toe
+            searchMarker = L.marker([geocodeResult.lat, geocodeResult.lon], {
+                icon: createMarkerIcon('#dc3545')
+            }).addTo(map);
+            
+            searchMarker.bindPopup(`
+                <strong>${naam}</strong><br>
+                ${geocodeResult.displayName}
+            `);
+
+            // Bereken afstanden
+            const addresses = addressManager.getAllAddresses();
+            const distances = [];
+
+            addresses.forEach(address => {
+                if (address.latitude && address.longitude) {
+                    const distance = calculateDistance(
+                        geocodeResult.lat,
+                        geocodeResult.lon,
+                        address.latitude,
+                        address.longitude
+                    );
+                    
+                    distances.push({
+                        address,
+                        distance
+                    });
+                }
+            });
+
+            // Sorteer op afstand
+            distances.sort((a, b) => a.distance - b.distance);
+
+            // Vind dichtstbijzijnde marker en highlight deze
+            if (distances.length > 0) {
+                const closest = distances[0];
+                closestMarker = savedMarkers.find(marker => {
+                    const lat = marker.getLatLng().lat;
+                    const lon = marker.getLatLng().lng;
+                    return Math.abs(lat - closest.address.latitude) < 0.0001 &&
+                           Math.abs(lon - closest.address.longitude) < 0.0001;
+                });
+
+                if (closestMarker) {
+                    closestMarker.setIcon(createMarkerIcon('#4ECDC4', true));
+                    
+                    // Teken lijn naar dichtstbijzijnde
+                    const line = L.polyline([
+                        [geocodeResult.lat, geocodeResult.lon],
+                        [closest.address.latitude, closest.address.longitude]
+                    ], {
+                        color: '#4ECDC4',
+                        weight: 3,
+                        opacity: 0.7,
+                        dashArray: '10, 5'
+                    }).addTo(map);
+                    
+                    distanceLines.push(line);
+                }
+            }
+
+            // Update tabel
+            updateDistanceTable(distances, naam);
+
+            // Pas zoom aan
+            const bounds = L.latLngBounds([
+                [geocodeResult.lat, geocodeResult.lon],
+                ...savedMarkers.map(m => m.getLatLng())
+            ]);
+            map.fitBounds(bounds.pad(0.1));
+
+            showMessage('searchMessage', 'Adres gevonden! Afstanden berekend.', 'success');
+        }
+
+        /**
+         * Update de afstand tabel
+         */
+        function updateDistanceTable(distances, searchName) {
+            const container = document.getElementById('distanceTableContainer');
+            
+            if (distances.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Geen opgeslagen adressen om afstanden te berekenen</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <p style="margin-bottom: 10px; color: #666;">
+                    Afstanden vanaf: <strong>${searchName}</strong>
+                </p>
+                <table class="distance-table">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th>Adres</th>
+                            <th>Afstand</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            distances.forEach((item, index) => {
+                const isClosest = index === 0;
+                html += `
+                    <tr class="${isClosest ? 'closest' : ''}">
+                        <td>${item.address.naam || 'Geen naam'}</td>
+                        <td>${addressManager.getFullAddressString(item.address)}</td>
+                        <td class="distance-value">${item.distance.toFixed(2)} km</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Update de lijst met opgeslagen adressen
+         */
+        function updateSavedAddressesList() {
+            const container = document.getElementById('savedAddressesList');
+            const addresses = addressManager.getAllAddresses();
+
+            if (addresses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📍</div>
+                        <p>Nog geen adressen opgeslagen</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            addresses.forEach(address => {
+                html += `
+                    <div class="address-item">
+                        <div class="address-item-header">
+                            <div>
+                                <div class="address-item-name">${address.naam || 'Geen naam'}</div>
+                                <div class="address-item-address">${addressManager.getFullAddressString(address)}</div>
+                            </div>
+                            <div class="address-item-actions">
+                                <button class="btn btn-danger btn-small" onclick="removeAddress('${address.id}')">Verwijder</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Verwijder een adres
+         */
+        function removeAddress(id) {
+            if (confirm('Weet je zeker dat je dit adres wilt verwijderen?')) {
+                addressManager.removeAddress(id);
+                updateSavedAddressesList();
+                updateMap();
+                
+                // Reset search als nodig
+                if (searchMarker) {
+                    map.removeLayer(searchMarker);
+                    searchMarker = null;
+                }
+                distanceLines.forEach(line => map.removeLayer(line));
+                distanceLines = [];
+                document.getElementById('distanceTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Voer een nieuw adres in om afstanden te zien</p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Toon een bericht
+         */
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'loading';
+            element.innerHTML = `<div class="${className}">${message}</div>`;
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    element.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        /**
+         * Upload en importeer Excel bestand
+         */
+        async function uploadExcelFile() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showMessage('excelUploadMessage', 'Selecteer eerst een Excel bestand', 'error');
+                return;
+            }
+
+            // Controleer bestandstype
+            if (!file.name.match(/\.(xlsx|xls)$/i)) {
+                showMessage('excelUploadMessage', 'Alleen .xlsx en .xls bestanden zijn toegestaan', 'error');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Bezig met verwerken...';
+
+            const progressDiv = document.getElementById('excelProgress');
+            const progressBar = document.getElementById('excelProgressBar');
+            const progressText = document.getElementById('excelProgressText');
+
+            try {
+                // Lees het Excel bestand
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // Neem het eerste werkblad
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Converteer naar JSON
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                if (jsonData.length < 2) {
+                    throw new Error('Excel bestand moet minimaal een header rij en één data rij bevatten');
+                }
+
+                // Zoek de kolommen (flexibel: zoek op naam of gebruik eerste twee kolommen)
+                const headers = jsonData[0].map(h => String(h || '').toLowerCase().trim());
+                
+                let naamColIndex = -1;
+                let adresColIndex = -1;
+
+                // Zoek kolommen op naam
+                headers.forEach((header, index) => {
+                    if (header.includes('naam') || header.includes('label') || header.includes('name')) {
+                        naamColIndex = index;
+                    }
+                    if (header.includes('adres') || header.includes('address') || header.includes('volledig')) {
+                        adresColIndex = index;
+                    }
+                });
+
+                // Als niet gevonden, gebruik eerste twee kolommen
+                if (naamColIndex === -1) naamColIndex = 0;
+                if (adresColIndex === -1) adresColIndex = 1;
+
+                // Verzamel adressen
+                const addressesToImport = [];
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    const naam = row[naamColIndex] ? String(row[naamColIndex]).trim() : '';
+                    const adres = row[adresColIndex] ? String(row[adresColIndex]).trim() : '';
+                    
+                    if (adres) {
+                        addressesToImport.push({ naam, adres });
+                    }
+                }
+
+                if (addressesToImport.length === 0) {
+                    throw new Error('Geen geldige adressen gevonden in het Excel bestand');
+                }
+
+                // Toon progress
+                progressDiv.style.display = 'block';
+                progressText.textContent = `0 van ${addressesToImport.length} adressen verwerkt...`;
+
+                // Verwerk elk adres
+                let successCount = 0;
+                let errorCount = 0;
+                const errors = [];
+
+                for (let i = 0; i < addressesToImport.length; i++) {
+                    const { naam, adres } = addressesToImport[i];
+                    
+                    // Update progress
+                    const progress = ((i + 1) / addressesToImport.length) * 100;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = `${i + 1} van ${addressesToImport.length} adressen verwerkt... (${naam || adres.substring(0, 30)}...)`;
+
+                    try {
+                        // Geocode het adres
+                        const geocodeResult = await geocodeAddress(adres);
+                        
+                        if (geocodeResult) {
+                            const { straat, huisnummer, postcode, plaats } = parseAddressString(adres);
+                            
+                            addressManager.addAddress({
+                                naam,
+                                straat,
+                                huisnummer,
+                                postcode,
+                                plaats,
+                                latitude: geocodeResult.lat,
+                                longitude: geocodeResult.lon
+                            });
+                            
+                            successCount++;
+                        } else {
+                            errorCount++;
+                            errors.push(`${naam || adres}: Adres niet gevonden`);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        errors.push(`${naam || adres}: ${error.message}`);
+                    }
+
+                    // Kleine delay om rate limiting te voorkomen
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                // Update UI
+                updateSavedAddressesList();
+                updateMap();
+
+                // Toon resultaten
+                progressBar.style.width = '100%';
+                progressText.textContent = `Klaar! ${successCount} succesvol, ${errorCount} fouten`;
+
+                let resultMessage = `✅ ${successCount} adres(sen) succesvol geïmporteerd!`;
+                if (errorCount > 0) {
+                    resultMessage += `<br>⚠️ ${errorCount} adres(sen) konden niet worden geïmporteerd.`;
+                    if (errors.length > 0) {
+                        resultMessage += '<br><details style="margin-top: 10px;"><summary>Bekijk fouten</summary><ul style="margin-top: 5px; padding-left: 20px;">';
+                        errors.forEach(err => {
+                            resultMessage += `<li style="color: #c33; font-size: 0.9rem;">${err}</li>`;
+                        });
+                        resultMessage += '</ul></details>';
+                    }
+                }
+
+                showMessage('excelUploadMessage', resultMessage, errorCount > 0 ? 'error' : 'success');
+
+                // Reset file input
+                fileInput.value = '';
+
+            } catch (error) {
+                console.error('Excel import fout:', error);
+                showMessage('excelUploadMessage', `Fout bij importeren: ${error.message}`, 'error');
+                progressDiv.style.display = 'none';
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '📤 Upload en Importeer Adressen';
+                
+                // Reset progress na 5 seconden
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '';
+                }, 5000);
+            }
+        }
+
+        // CSS voor pulse animatie
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.2); opacity: 0.8; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialiseer bij laden
+        window.onload = () => {
+            updateSavedAddressesList();
+            updateMap();
+            // Setup autocomplete
+            setupAutocomplete('searchAddress', 'autocompleteDropdown');
+            setupAutocomplete('addressFull', 'autocompleteDropdownAdd');
+            
+            // Enter toets support
+            document.getElementById('searchAddress').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchNewAddress();
+                }
+            });
+            document.getElementById('addressFull').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addNewAddress();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
+
