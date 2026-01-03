@@ -670,12 +670,17 @@
             
             addresses.forEach(address => {
                 if (address.latitude && address.longitude) {
+                    // Gebruik een andere kleur voor gedeelde adressen
+                    const isShared = address.source === 'shared';
+                    const markerColor = isShared ? '#4ECDC4' : '#2C5F6B';
+                    const sharedBadge = isShared ? '<br><span style="background: #4ECDC4; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">🌐 Gedeeld</span>' : '';
+                    
                     const marker = L.marker([address.latitude, address.longitude], {
-                        icon: createMarkerIcon('#2C5F6B')
+                        icon: createMarkerIcon(markerColor)
                     }).addTo(map);
                     
                     marker.bindPopup(`
-                        <strong>${address.naam || 'Geen naam'}</strong><br>
+                        <strong>${address.naam || 'Geen naam'}</strong>${sharedBadge}<br>
                         ${addressManager.getFullAddressString(address)}
                     `);
                     
@@ -1239,12 +1244,50 @@
                     console.log('Aantal gedeelde adressen:', addressManager.getSharedAddresses().length);
                     
                     if (success) {
-                        const count = addressManager.getSharedAddresses().length;
+                        const sharedAddresses = addressManager.getSharedAddresses();
+                        const count = sharedAddresses.length;
+                        
+                        // Geocode adressen zonder coördinaten
+                        const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
+                        
+                        if (addressesToGeocode.length > 0) {
+                            statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                            
+                            let geocodedCount = 0;
+                            for (let i = 0; i < addressesToGeocode.length; i++) {
+                                const addr = addressesToGeocode[i];
+                                const addressString = addressManager.getFullAddressString(addr);
+                                
+                                try {
+                                    const geocodeResult = await geocodeAddress(addressString);
+                                    if (geocodeResult) {
+                                        // Update het adres in de sharedAddresses array
+                                        const index = addressManager.sharedAddresses.findIndex(a => a.id === addr.id);
+                                        if (index !== -1) {
+                                            addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
+                                            addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
+                                            geocodedCount++;
+                                        }
+                                    }
+                                    
+                                    // Update progress
+                                    statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                    
+                                    // Kleine delay om rate limiting te voorkomen
+                                    await new Promise(resolve => setTimeout(resolve, 200));
+                                } catch (error) {
+                                    console.error(`Fout bij geocoderen van adres ${addr.naam || addressString}:`, error);
+                                }
+                            }
+                            
+                            console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd`);
+                        }
+                        
                         console.log(`✅ ${count} gedeelde adressen geladen`);
-                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
+                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${addressesToGeocode.length > 0 ? ` (${geocodedCount} gegeocodeerd)` : ''}`;
                         statusDiv.style.color = 'var(--light-turquoise)';
                         
-                        // Update UI
+                        // Update UI en kaart
                         updateSavedAddressesList();
                         updateMap();
                     } else {
@@ -1267,8 +1310,43 @@
                     try {
                         const success = await addressManager.loadSharedAddresses(savedUrl);
                         if (success) {
-                            const count = addressManager.getSharedAddresses().length;
-                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
+                            const sharedAddresses = addressManager.getSharedAddresses();
+                            const count = sharedAddresses.length;
+                            
+                            // Geocode adressen zonder coördinaten
+                            const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
+                            
+                            if (addressesToGeocode.length > 0) {
+                                statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                
+                                let geocodedCount = 0;
+                                for (let i = 0; i < addressesToGeocode.length; i++) {
+                                    const addr = addressesToGeocode[i];
+                                    const addressString = addressManager.getFullAddressString(addr);
+                                    
+                                    try {
+                                        const geocodeResult = await geocodeAddress(addressString);
+                                        if (geocodeResult) {
+                                            const index = addressManager.sharedAddresses.findIndex(a => a.id === addr.id);
+                                            if (index !== -1) {
+                                                addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
+                                                addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
+                                                geocodedCount++;
+                                            }
+                                        }
+                                        
+                                        statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                        
+                                        await new Promise(resolve => setTimeout(resolve, 200));
+                                    } catch (error) {
+                                        console.error(`Fout bij geocoderen van adres ${addr.naam || addressString}:`, error);
+                                    }
+                                }
+                                
+                                console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd`);
+                            }
+                            
+                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${addressesToGeocode.length > 0 ? ` (${geocodedCount} gegeocodeerd)` : ''}`;
                             statusDiv.style.color = 'var(--light-turquoise)';
                             updateSavedAddressesList();
                             updateMap();
@@ -1331,7 +1409,7 @@
         /**
          * Stel handmatig een gedeelde adressen URL in
          */
-        function setManualSharedUrl() {
+        async function setManualSharedUrl() {
             const urlInput = document.getElementById('manualSharedUrl');
             const url = urlInput.value.trim();
             
@@ -1346,14 +1424,10 @@
             }
             
             localStorage.setItem('sharedAddressesUrl', url);
-            showMessage('manualUrlMessage', 'URL opgeslagen! Herlaad de pagina om de adressen te laden.', 'success');
+            showMessage('manualUrlMessage', 'URL opgeslagen! Adressen worden geladen...', 'success');
             
-            // Laad direct opnieuw
-            setTimeout(async () => {
-                await loadSharedAddresses();
-                updateSavedAddressesList();
-                updateMap();
-            }, 500);
+            // Laad direct opnieuw (dit zal ook geocoderen en markers tonen)
+            await loadSharedAddresses();
         }
 
         /**
@@ -1377,14 +1451,10 @@
                     if (Array.isArray(data)) {
                         // Sla automatisch op als het werkt
                         localStorage.setItem('sharedAddressesUrl', url);
-                        showMessage('manualUrlMessage', `✅ URL werkt! ${data.length} adres(sen) gevonden. URL opgeslagen!`, 'success');
+                        showMessage('manualUrlMessage', `✅ URL werkt! ${data.length} adres(sen) gevonden. URL opgeslagen! Adressen worden geladen...`, 'success');
                         
-                        // Laad direct de adressen
-                        setTimeout(async () => {
-                            await loadSharedAddresses();
-                            updateSavedAddressesList();
-                            updateMap();
-                        }, 500);
+                        // Laad direct de adressen (dit zal ook geocoderen en markers tonen)
+                        await loadSharedAddresses();
                     } else {
                         showMessage('manualUrlMessage', '⚠️ URL werkt, maar data is geen array', 'error');
                     }
