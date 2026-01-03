@@ -6,6 +6,7 @@
 class AddressManager {
     constructor() {
         this.storageKey = 'savedAddresses';
+        this.sharedAddresses = []; // Gedeelde adressen vanuit GitHub
         this.addresses = this.loadAddresses();
     }
 
@@ -86,10 +87,89 @@ class AddressManager {
     }
 
     /**
-     * Haal alle adressen op
+     * Laad gedeelde adressen vanuit een URL (bijv. GitHub Raw)
+     */
+    async loadSharedAddresses(url) {
+        try {
+            console.log('Fetching gedeelde adressen van:', url);
+            const response = await fetch(url, {
+                cache: 'no-cache', // Altijd de nieuwste versie ophalen
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            console.log('Response status:', response.status, response.statusText);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Gedeelde adressen data ontvangen:', data);
+                
+                // Valideer dat het een array is
+                if (!Array.isArray(data)) {
+                    console.error('Gedeelde adressen is geen array:', data);
+                    return false;
+                }
+                
+                // Markeer als gedeeld
+                this.sharedAddresses = data.map(addr => ({
+                    ...addr,
+                    source: 'shared'
+                }));
+                
+                console.log(`${this.sharedAddresses.length} gedeelde adressen geladen`);
+                return true;
+            } else {
+                console.error('HTTP fout:', response.status, response.statusText);
+                // Probeer de response tekst te lezen voor meer info
+                const text = await response.text();
+                console.error('Response body:', text);
+                return false;
+            }
+        } catch (error) {
+            console.error('Fout bij laden van gedeelde adressen:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                url: url
+            });
+            return false;
+        }
+    }
+
+    /**
+     * Haal alle adressen op (zowel lokaal als gedeeld)
      */
     getAllAddresses() {
+        // Combineer gedeelde en lokale adressen, voorkom duplicaten
+        const allAddresses = [...this.sharedAddresses];
+        const localIds = new Set(this.sharedAddresses.map(a => a.id));
+        
+        this.addresses.forEach(addr => {
+            // Voeg alleen toe als het niet al in gedeelde lijst staat
+            if (!localIds.has(addr.id)) {
+                allAddresses.push({
+                    ...addr,
+                    source: 'local'
+                });
+            }
+        });
+        
+        return allAddresses;
+    }
+
+    /**
+     * Haal alleen lokale adressen op
+     */
+    getLocalAddresses() {
         return this.addresses;
+    }
+
+    /**
+     * Haal alleen gedeelde adressen op
+     */
+    getSharedAddresses() {
+        return this.sharedAddresses;
     }
 
     /**
