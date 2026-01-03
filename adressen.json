@@ -1,27 +1,972 @@
 [
   {
     "id": "shared-1",
-    "naam": "Voorbeeld Adres 1",
-    "straat": "Damrak",
-    "huisnummer": "1",
-    "postcode": "1012 LG",
-    "plaats": "Amsterdam",
-    "latitude": 52.379189,
-    "longitude": 4.900278,
-    "toegevoegdOp": "2024-01-01T00:00:00.000Z",
-    "source": "shared"
+    "naam": "Aarts, M.C.G. (Chantal)",
+    "straat": "Hogeweg",
+    "huisnummer": "14",
+    "postcode": "6621 BN",
+    "plaats": "DREUMEL",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.034959Z"
   },
   {
     "id": "shared-2",
-    "naam": "Voorbeeld Adres 2",
-    "straat": "Coolsingel",
-    "huisnummer": "40",
-    "postcode": "3011 AD",
-    "plaats": "Rotterdam",
-    "latitude": 51.9225,
-    "longitude": 4.4778,
-    "toegevoegdOp": "2024-01-01T00:00:00.000Z",
-    "source": "shared"
+    "naam": "Adrichem, A.J.M. van (Arusha)",
+    "straat": "Slotboomstraat",
+    "huisnummer": "24 b",
+    "postcode": "3082 GR",
+    "plaats": "ROTTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035075Z"
+  },
+  {
+    "id": "shared-3",
+    "naam": "Bakayoko, E.G.C.E. (Evita)",
+    "straat": "Zanglijster",
+    "huisnummer": "85",
+    "postcode": "3911 ER",
+    "plaats": "RHENEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035159Z"
+  },
+  {
+    "id": "shared-4",
+    "naam": "Beek, M.S. van (Martine)",
+    "straat": "Witsenstraat",
+    "huisnummer": "13",
+    "postcode": "6813 GT",
+    "plaats": "ARNHEM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035236Z"
+  },
+  {
+    "id": "shared-5",
+    "naam": "Boeren, L.A. (Lisette)",
+    "straat": "Van Lippe Biesterfeldstraat",
+    "huisnummer": "3",
+    "postcode": "3523 VA",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035308Z"
+  },
+  {
+    "id": "shared-6",
+    "naam": "Borghuis, K. (Kim)",
+    "straat": "Koningsweg",
+    "huisnummer": "358 e",
+    "postcode": "3585 LE",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035375Z"
+  },
+  {
+    "id": "shared-7",
+    "naam": "Bouma, S.A. (Sophie Annelot)",
+    "straat": "Veenwortel",
+    "huisnummer": "13",
+    "postcode": "9302 AV",
+    "plaats": "RODEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035452Z"
+  },
+  {
+    "id": "shared-8",
+    "naam": "Bouwman, C.G.W. (Charlotte)",
+    "straat": "Droogveld",
+    "huisnummer": "10",
+    "postcode": "6916 LK",
+    "plaats": "TOLKAMER",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035515Z"
+  },
+  {
+    "id": "shared-9",
+    "naam": "Bouwman, G.E. (Geke)",
+    "straat": "Lepelenburg",
+    "huisnummer": "9",
+    "postcode": "3512 NJ",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035577Z"
+  },
+  {
+    "id": "shared-10",
+    "naam": "Boven, A.M.E. van (Annemijn)",
+    "straat": "Van Beuningenstraat",
+    "huisnummer": "188 D",
+    "postcode": "1051 XZ",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035641Z"
+  },
+  {
+    "id": "shared-11",
+    "naam": "Breukelen, M.D. van (Manon)",
+    "straat": "Pimpernelstraat",
+    "huisnummer": "9",
+    "postcode": "1314 JK",
+    "plaats": "ALMERE",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035704Z"
+  },
+  {
+    "id": "shared-12",
+    "naam": "Broekhoven, M.E.C.L. van (Marlou)",
+    "straat": "Diepenbrocklaan",
+    "huisnummer": "106",
+    "postcode": "5012 GM",
+    "plaats": "TILBURG",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035769Z"
+  },
+  {
+    "id": "shared-13",
+    "naam": "Broekhoven, T. van (Tharo)",
+    "straat": "Pieter Vreedeplein",
+    "huisnummer": "12 A",
+    "postcode": "5038 BP",
+    "plaats": "TILBURG",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035831Z"
+  },
+  {
+    "id": "shared-14",
+    "naam": "Bults, N. (Nienke)",
+    "straat": "Westerlaan",
+    "huisnummer": "24",
+    "postcode": "3731 EL",
+    "plaats": "DE BILT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035891Z"
+  },
+  {
+    "id": "shared-15",
+    "naam": "Coppens, M.A. (Manja)",
+    "straat": "Ambonstraat",
+    "huisnummer": "14",
+    "postcode": "3531 JT",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.035950Z"
+  },
+  {
+    "id": "shared-16",
+    "naam": "Derksen, D. (Dionne)",
+    "straat": "Hoogravenseweg",
+    "huisnummer": "123",
+    "postcode": "3523 TJ",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036012Z"
+  },
+  {
+    "id": "shared-17",
+    "naam": "Dijksman, J.E. (Josette)",
+    "straat": "B.F. Suermanstraat",
+    "huisnummer": "15 bis",
+    "postcode": "3515 XK",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036072Z"
+  },
+  {
+    "id": "shared-18",
+    "naam": "Dooren, C.P.E. van (Ernie)",
+    "straat": "Laagstraat",
+    "huisnummer": "4",
+    "postcode": "5102 XW",
+    "plaats": "DONGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036131Z"
+  },
+  {
+    "id": "shared-19",
+    "naam": "Draafsel, J. (Jessie)",
+    "straat": "Liendertseweg",
+    "huisnummer": "38",
+    "postcode": "3814 PK",
+    "plaats": "AMERSFOORT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036194Z"
+  },
+  {
+    "id": "shared-20",
+    "naam": "Ebben - de Jong, P. G. (Petra)",
+    "straat": "Händellaan",
+    "huisnummer": "15",
+    "postcode": "3723 LS",
+    "plaats": "BILTHOVEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036253Z"
+  },
+  {
+    "id": "shared-21",
+    "naam": "Eeden, F.H.R. van den (Florine)",
+    "straat": "Marijkestraat",
+    "huisnummer": "18",
+    "postcode": "4101 JG",
+    "plaats": "CULEMBORG",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036313Z"
+  },
+  {
+    "id": "shared-22",
+    "naam": "Eras, P.M.J.M. (Pien)",
+    "straat": "Amstelkade 81",
+    "huisnummer": "2",
+    "postcode": "1078 AM",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036392Z"
+  },
+  {
+    "id": "shared-23",
+    "naam": "Gemser, J.W. (Jesse)",
+    "straat": "Krayenhofflaan",
+    "huisnummer": "275",
+    "postcode": "6541 PR",
+    "plaats": "NIJMEGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036452Z"
+  },
+  {
+    "id": "shared-24",
+    "naam": "Gerards, B.G. (Bart)",
+    "straat": "Koningstraat",
+    "huisnummer": "68",
+    "postcode": "6654 AG",
+    "plaats": "AFFERDEN GLD",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036510Z"
+  },
+  {
+    "id": "shared-25",
+    "naam": "Gerritse, S. (Stijn)",
+    "straat": "Zwart Janstraat 78 B-2",
+    "huisnummer": "",
+    "postcode": "3035 AV",
+    "plaats": "ROTTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036648Z"
+  },
+  {
+    "id": "shared-26",
+    "naam": "Goedkoop, S.A. (Stijn)",
+    "straat": "Wilhelminastraat",
+    "huisnummer": "104 a",
+    "postcode": "1054 WN",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036725Z"
+  },
+  {
+    "id": "shared-27",
+    "naam": "Goodijk, D. (Dieke)",
+    "straat": "Warande",
+    "huisnummer": "115",
+    "postcode": "3705 ZJ",
+    "plaats": "ZEIST",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036793Z"
+  },
+  {
+    "id": "shared-28",
+    "naam": "Gregory, A. (Annemijn)",
+    "straat": "Van Speijkstraat",
+    "huisnummer": "110 A",
+    "postcode": "2518 GG",
+    "plaats": "'S-GRAVENHAGE",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036860Z"
+  },
+  {
+    "id": "shared-29",
+    "naam": "Hamersma, L.L. (Liza)",
+    "straat": "Kievitstraat 2 b-bis",
+    "huisnummer": "",
+    "postcode": "3514 VB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036932Z"
+  },
+  {
+    "id": "shared-30",
+    "naam": "Hemert, K.A.J. van (Kiki)",
+    "straat": "Bergstraat",
+    "huisnummer": "17 bis",
+    "postcode": "3511 RR",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.036999Z"
+  },
+  {
+    "id": "shared-31",
+    "naam": "Heuvel, P.S. van den (Paulien)",
+    "straat": "Prinses Beatrixplein",
+    "huisnummer": "16 a",
+    "postcode": "3523 VD",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037061Z"
+  },
+  {
+    "id": "shared-32",
+    "naam": "Hofstede, A.W.F. (Aniek)",
+    "straat": "Rembrandtstraat",
+    "huisnummer": "36",
+    "postcode": "6521 MA",
+    "plaats": "NIJMEGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037122Z"
+  },
+  {
+    "id": "shared-33",
+    "naam": "Houcke, S.M. van (Sarita)",
+    "straat": "De Kastanje",
+    "huisnummer": "10",
+    "postcode": "3161 JJ",
+    "plaats": "RHOON",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037183Z"
+  },
+  {
+    "id": "shared-34",
+    "naam": "Houtman, L.D. (Lisa)",
+    "straat": "Beemdweg",
+    "huisnummer": "13 g",
+    "postcode": "3852 XC",
+    "plaats": "ERMELO",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037243Z"
+  },
+  {
+    "id": "shared-35",
+    "naam": "Huizenga, J.P. (Joost)",
+    "straat": "Eendrachtlaan",
+    "huisnummer": "16 g",
+    "postcode": "3526 LB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037307Z"
+  },
+  {
+    "id": "shared-36",
+    "naam": "Hulshof, A.G.J. (Alex)",
+    "straat": "Händelstraat 120-",
+    "huisnummer": "",
+    "postcode": "6961 AG",
+    "plaats": "EERBEEK",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037369Z"
+  },
+  {
+    "id": "shared-37",
+    "naam": "Hulst, F.J.P. van der (Frank)",
+    "straat": "Sigmaplantsoen",
+    "huisnummer": "711",
+    "postcode": "2321 KL",
+    "plaats": "LEIDEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037430Z"
+  },
+  {
+    "id": "shared-38",
+    "naam": "Jonker, E.L. (Esther)",
+    "straat": "Maasdrielhof",
+    "huisnummer": "47",
+    "postcode": "1106 LW",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037490Z"
+  },
+  {
+    "id": "shared-39",
+    "naam": "Kam, M. de (Marloes)",
+    "straat": "Koningsmantelhof",
+    "huisnummer": "4",
+    "postcode": "6533 SJ",
+    "plaats": "NIJMEGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037550Z"
+  },
+  {
+    "id": "shared-40",
+    "naam": "Kampen, L. (Laura)",
+    "straat": "Koninginnelaan",
+    "huisnummer": "110",
+    "postcode": "3762 DJ",
+    "plaats": "SOEST",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037610Z"
+  },
+  {
+    "id": "shared-41",
+    "naam": "Karabulut, S. (Semra)",
+    "straat": "Steve Bikostraat",
+    "huisnummer": "158",
+    "postcode": "3573 BE",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037669Z"
+  },
+  {
+    "id": "shared-42",
+    "naam": "Karimi, N. (Nilab)",
+    "straat": "Bussumsestraat",
+    "huisnummer": "175",
+    "postcode": "2574 JH",
+    "plaats": "'S-GRAVENHAGE",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037729Z"
+  },
+  {
+    "id": "shared-43",
+    "naam": "Kekem, M.J. van (Maxime)",
+    "straat": "Stadhoudersweg",
+    "huisnummer": "143 a",
+    "postcode": "3039 EH",
+    "plaats": "ROTTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037788Z"
+  },
+  {
+    "id": "shared-44",
+    "naam": "Keunen, J.H.B. (Julie)",
+    "straat": "Adelaarstraat",
+    "huisnummer": "31 Bs",
+    "postcode": "3514 CB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037846Z"
+  },
+  {
+    "id": "shared-45",
+    "naam": "Klinkenberg, A. (Anouk)",
+    "straat": "Oudenoord",
+    "huisnummer": "371",
+    "postcode": "3513 EP",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037904Z"
+  },
+  {
+    "id": "shared-46",
+    "naam": "Koopmans - Drenth, I.M. (Iris)",
+    "straat": "Scheerboom",
+    "huisnummer": "3",
+    "postcode": "6717 ZX",
+    "plaats": "EDE GLD",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.037962Z"
+  },
+  {
+    "id": "shared-47",
+    "naam": "Koper, N.E. (Nina)",
+    "straat": "Herculeslaan",
+    "huisnummer": "148",
+    "postcode": "3584 AB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038021Z"
+  },
+  {
+    "id": "shared-48",
+    "naam": "Kuijpens - Sikma, J.J.C. (Juliette)",
+    "straat": "Prins Bernhardlaan",
+    "huisnummer": "27 BIS",
+    "postcode": "3555 AB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038080Z"
+  },
+  {
+    "id": "shared-49",
+    "naam": "Leeraar, C. (Cheyenne)",
+    "straat": "Weverstraat",
+    "huisnummer": "783",
+    "postcode": "4204 CT",
+    "plaats": "GORINCHEM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038138Z"
+  },
+  {
+    "id": "shared-50",
+    "naam": "Leijte, B.J. (Bram)",
+    "straat": "Jaffastraat",
+    "huisnummer": "13",
+    "postcode": "3532 EL",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038196Z"
+  },
+  {
+    "id": "shared-51",
+    "naam": "Lensink - Woudman, L. (Lianne)",
+    "straat": "Wittenburg",
+    "huisnummer": "37",
+    "postcode": "3862 EB",
+    "plaats": "NIJKERK GLD",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038255Z"
+  },
+  {
+    "id": "shared-52",
+    "naam": "Linden, A. van der (Alice)",
+    "straat": "Pastoriestraat",
+    "huisnummer": "21",
+    "postcode": "5251 BB",
+    "plaats": "VLIJMEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038313Z"
+  },
+  {
+    "id": "shared-53",
+    "naam": "Lubbers, S.C.A. (Sanne)",
+    "straat": "Van Brakelstraat",
+    "huisnummer": "3",
+    "postcode": "3572 XP",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038372Z"
+  },
+  {
+    "id": "shared-54",
+    "naam": "Lups, M. (Monique)",
+    "straat": "Ernest Hemingwaystraat",
+    "huisnummer": "73",
+    "postcode": "6836 TK",
+    "plaats": "ARNHEM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038431Z"
+  },
+  {
+    "id": "shared-55",
+    "naam": "Marrée, C.A.J. (Charlotte)",
+    "straat": "Van Egmondkade",
+    "huisnummer": "22 bis",
+    "postcode": "3553 JG",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038490Z"
+  },
+  {
+    "id": "shared-56",
+    "naam": "Martens, M.G.J. (Myriam)",
+    "straat": "Willemstraat",
+    "huisnummer": "4",
+    "postcode": "5691 TR",
+    "plaats": "SON",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038547Z"
+  },
+  {
+    "id": "shared-57",
+    "naam": "Moghaddam, R.J.C. (Roxanne)",
+    "straat": "Papegaaistraat",
+    "huisnummer": "156",
+    "postcode": "3061 CW",
+    "plaats": "ROTTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038610Z"
+  },
+  {
+    "id": "shared-58",
+    "naam": "Mol, T. (Thamara)",
+    "straat": "Simon Vestdijkstraat",
+    "huisnummer": "9",
+    "postcode": "3842 LK",
+    "plaats": "HARDERWIJK",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038670Z"
+  },
+  {
+    "id": "shared-59",
+    "naam": "Oude Hengel, C.J.M. (Cindy)",
+    "straat": "Brookhuis",
+    "huisnummer": "20",
+    "postcode": "7631 LC",
+    "plaats": "OOTMARSUM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038730Z"
+  },
+  {
+    "id": "shared-60",
+    "naam": "Pals, M (Michel)",
+    "straat": "Regenboog",
+    "huisnummer": "135",
+    "postcode": "6661 PM",
+    "plaats": "ELST GLD",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038788Z"
+  },
+  {
+    "id": "shared-61",
+    "naam": "Pijnappel, A.G.C. (Anouk)",
+    "straat": "Volkerakstraat 5-1",
+    "huisnummer": "",
+    "postcode": "1078 XM",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038848Z"
+  },
+  {
+    "id": "shared-62",
+    "naam": "Rensen, R.M.G.A. (Roelie)",
+    "straat": "Balladestraat",
+    "huisnummer": "48",
+    "postcode": "6544 WX",
+    "plaats": "NIJMEGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038906Z"
+  },
+  {
+    "id": "shared-63",
+    "naam": "Rietjens, K. (Kim)",
+    "straat": "Glenn Millerpad",
+    "huisnummer": "32",
+    "postcode": "3543 GE",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.038973Z"
+  },
+  {
+    "id": "shared-64",
+    "naam": "Rietschoten, T.A.J. van (Tijn)",
+    "straat": "Frederiksstraat 16",
+    "huisnummer": "2",
+    "postcode": "1054 LC",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039033Z"
+  },
+  {
+    "id": "shared-65",
+    "naam": "Rijn, M. van (Monique)",
+    "straat": "Terracotta",
+    "huisnummer": "6",
+    "postcode": "6596 GT",
+    "plaats": "MILSBEEK",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039096Z"
+  },
+  {
+    "id": "shared-66",
+    "naam": "Roest, L.M. (Lennart)",
+    "straat": "'t Jagerspaadje",
+    "huisnummer": "17",
+    "postcode": "1231 KJ",
+    "plaats": "LOOSDRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039157Z"
+  },
+  {
+    "id": "shared-67",
+    "naam": "Rooijakkers, N. (Niels)",
+    "straat": "Willem Kloosstraat",
+    "huisnummer": "82",
+    "postcode": "2394 BD",
+    "plaats": "HAZERSWOUDE-RIJNDIJK",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039217Z"
+  },
+  {
+    "id": "shared-68",
+    "naam": "Runne, R.W. (Roderick)",
+    "straat": "Hagenstein",
+    "huisnummer": "114",
+    "postcode": "3834 BZ",
+    "plaats": "LEUSDEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039277Z"
+  },
+  {
+    "id": "shared-69",
+    "naam": "Santing, T.D. (Tinka)",
+    "straat": "Maanstraat",
+    "huisnummer": "43",
+    "postcode": "6543 VR",
+    "plaats": "NIJMEGEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039335Z"
+  },
+  {
+    "id": "shared-70",
+    "naam": "Schimmel, M.C. (Marjolein)",
+    "straat": "Paduaweg",
+    "huisnummer": "5 D",
+    "postcode": "3734 GG",
+    "plaats": "DEN DOLDER",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039395Z"
+  },
+  {
+    "id": "shared-71",
+    "naam": "Schmidt, M.A.M. (Monique)",
+    "straat": "Moses en Aäronlaan",
+    "huisnummer": "15",
+    "postcode": "6564 BG",
+    "plaats": "HEILIG LANDSTICHTING",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039455Z"
+  },
+  {
+    "id": "shared-72",
+    "naam": "Steenaert, L.W.M. (Lila)",
+    "straat": "Turkooislaan",
+    "huisnummer": "6",
+    "postcode": "3523 GM",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039514Z"
+  },
+  {
+    "id": "shared-73",
+    "naam": "Steffers, L. (Linda)",
+    "straat": "Italiëstraat",
+    "huisnummer": "109",
+    "postcode": "6663 PG",
+    "plaats": "LENT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039574Z"
+  },
+  {
+    "id": "shared-74",
+    "naam": "Stege, M. van der (Maaike)",
+    "straat": "Heggerankweg",
+    "huisnummer": "341",
+    "postcode": "1032 JE",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039632Z"
+  },
+  {
+    "id": "shared-75",
+    "naam": "Steuter, S.B. (Sophia)",
+    "straat": "Gerbrandyhof",
+    "huisnummer": "220",
+    "postcode": "3515 HB",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039690Z"
+  },
+  {
+    "id": "shared-76",
+    "naam": "Stijl, L.M. (Lisanne)",
+    "straat": "Terweeweg",
+    "huisnummer": "104",
+    "postcode": "2341 CV",
+    "plaats": "OEGSTGEEST",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039748Z"
+  },
+  {
+    "id": "shared-77",
+    "naam": "Stuurman, H.F. (Hessel)",
+    "straat": "Koninginnegracht",
+    "huisnummer": "80 A",
+    "postcode": "2514 AJ",
+    "plaats": "'S-GRAVENHAGE",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039807Z"
+  },
+  {
+    "id": "shared-78",
+    "naam": "Teuling, F.E.M. den (Erik)",
+    "straat": "Poirterslaan",
+    "huisnummer": "50",
+    "postcode": "5611 LB",
+    "plaats": "EINDHOVEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039866Z"
+  },
+  {
+    "id": "shared-79",
+    "naam": "Tuinte - Prins, L. (Lisanne)",
+    "straat": "Fregatstraat",
+    "huisnummer": "21",
+    "postcode": "3534 RA",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039924Z"
+  },
+  {
+    "id": "shared-80",
+    "naam": "Valks, L.L.J. (Lianne)",
+    "straat": "Mandenmaker",
+    "huisnummer": "21",
+    "postcode": "6603 JS",
+    "plaats": "WIJCHEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.039981Z"
+  },
+  {
+    "id": "shared-81",
+    "naam": "Velis, L. (Leslie)",
+    "straat": "Talingweide",
+    "huisnummer": "75",
+    "postcode": "3403 AC",
+    "plaats": "IJSSELSTEIN UT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040046Z"
+  },
+  {
+    "id": "shared-82",
+    "naam": "Vermeer, E. (Evi)",
+    "straat": "Kwartelstraat",
+    "huisnummer": "45",
+    "postcode": "3514 ET",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040103Z"
+  },
+  {
+    "id": "shared-83",
+    "naam": "Vermunt, M.G.J. (Maaike)",
+    "straat": "Bisschopsweg",
+    "huisnummer": "56",
+    "postcode": "3817 BW",
+    "plaats": "AMERSFOORT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040160Z"
+  },
+  {
+    "id": "shared-84",
+    "naam": "Verstijnen, F.C.M. (Frens)",
+    "straat": "Parkzichtlaan 238-g",
+    "huisnummer": "",
+    "postcode": "3544 MN",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040220Z"
+  },
+  {
+    "id": "shared-85",
+    "naam": "Ververs, R. (Roxanne)",
+    "straat": "Hagesteinsestraat",
+    "huisnummer": "94",
+    "postcode": "4125 RN",
+    "plaats": "HOEF EN HAAG",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040278Z"
+  },
+  {
+    "id": "shared-86",
+    "naam": "Verzijl, J.G. (Jan Gerben)",
+    "straat": "Regentesseplantsoen 55 A/B",
+    "huisnummer": "",
+    "postcode": "2801 CJ",
+    "plaats": "GOUDA",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040337Z"
+  },
+  {
+    "id": "shared-87",
+    "naam": "Visser de - Velu, J.F. (Juliëtte)",
+    "straat": "Beatrixlaan",
+    "huisnummer": "2",
+    "postcode": "3941 EE",
+    "plaats": "DOORN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040395Z"
+  },
+  {
+    "id": "shared-88",
+    "naam": "Visser, N. (Nicky)",
+    "straat": "Wilde rucolavliet",
+    "huisnummer": "23",
+    "postcode": "3545 CL",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040453Z"
+  },
+  {
+    "id": "shared-89",
+    "naam": "Vissers, S.N. (Sybe)",
+    "straat": "Dirigentplein",
+    "huisnummer": "151",
+    "postcode": "5642 RK",
+    "plaats": "EINDHOVEN",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040511Z"
+  },
+  {
+    "id": "shared-90",
+    "naam": "Vlems, F.A. (Femke)",
+    "straat": "Cliffordstraat 6-111",
+    "huisnummer": "",
+    "postcode": "1051 GT",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040577Z"
+  },
+  {
+    "id": "shared-91",
+    "naam": "Voort, J. van de (Josanne)",
+    "straat": "Kuipersstraat",
+    "huisnummer": "88 B",
+    "postcode": "1073 ES",
+    "plaats": "AMSTERDAM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040639Z"
+  },
+  {
+    "id": "shared-92",
+    "naam": "Vos, J.P. (Jurgen)",
+    "straat": "Prins Bernhardstraat",
+    "huisnummer": "77",
+    "postcode": "3262 SN",
+    "plaats": "OUD BEIJERLAND",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040697Z"
+  },
+  {
+    "id": "shared-93",
+    "naam": "Walvius, L. (Lisa)",
+    "straat": "Doornstraat",
+    "huisnummer": "15",
+    "postcode": "3581 TS",
+    "plaats": "UTRECHT",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040755Z"
+  },
+  {
+    "id": "shared-94",
+    "naam": "Wilbrink, A. (Alexander)",
+    "straat": "Gildenring",
+    "huisnummer": "62",
+    "postcode": "3981 JG",
+    "plaats": "BUNNIK",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040812Z"
+  },
+  {
+    "id": "shared-95",
+    "naam": "Wolffenbuttel, K.D.C. (Kim)",
+    "straat": "Lombardje",
+    "huisnummer": "11",
+    "postcode": "5211 HN",
+    "plaats": "'S-HERTOGENBOSCH",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040869Z"
+  },
+  {
+    "id": "shared-96",
+    "naam": "Zandbergen, S.D.Z. (Sharon)",
+    "straat": "Professor Kochstraat",
+    "huisnummer": "21",
+    "postcode": "1221 KD",
+    "plaats": "HILVERSUM",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040931Z"
+  },
+  {
+    "id": "shared-97",
+    "naam": "Zuurbier, J.J. (Joost)",
+    "straat": "Utrechtseweg",
+    "huisnummer": "57",
+    "postcode": "1381 GT",
+    "plaats": "WEESP",
+    "source": "shared",
+    "toegevoegdOp": "2026-01-03T13:06:17.040991Z"
   }
 ]
-
