@@ -769,13 +769,25 @@
 
             const { straat, huisnummer, postcode, plaats } = parseAddressString(fullAddressInput);
             
-            showMessage('addressMessage', 'Adres wordt gegeocodeerd...', 'loading');
+            // Maak een tijdelijk adres object voor cache lookup
+            const tempAddress = { straat, huisnummer, postcode, plaats };
             
-            const geocodeResult = await geocodeAddress(fullAddressInput);
+            // Check eerst cache
+            let geocodeResult = getCachedGeocode(tempAddress);
             
             if (!geocodeResult) {
-                showMessage('addressMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
-                return;
+                showMessage('addressMessage', 'Adres wordt gegeocodeerd...', 'loading');
+                geocodeResult = await geocodeAddress(fullAddressInput);
+                
+                if (!geocodeResult) {
+                    showMessage('addressMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
+                    return;
+                }
+                
+                // Sla op in cache voor volgende keer
+                setCachedGeocode(tempAddress, geocodeResult.lat, geocodeResult.lon);
+            } else {
+                showMessage('addressMessage', 'Adres gevonden in cache...', 'loading');
             }
 
             const newAddress = addressManager.addAddress({
@@ -1130,6 +1142,7 @@
                 // Verwerk elk adres
                 let successCount = 0;
                 let errorCount = 0;
+                let cachedCount = 0;
                 const errors = [];
 
                 for (let i = 0; i < addressesToImport.length; i++) {
@@ -1138,15 +1151,31 @@
                     // Update progress
                     const progress = ((i + 1) / addressesToImport.length) * 100;
                     progressBar.style.width = progress + '%';
-                    progressText.textContent = `${i + 1} van ${addressesToImport.length} adressen verwerkt... (${naam || adres.substring(0, 30)}...)`;
+                    progressText.textContent = `${i + 1} van ${addressesToImport.length} adressen verwerkt... (${naam || adres.substring(0, 30)}...)${cachedCount > 0 ? ` [${cachedCount} uit cache]` : ''}`;
 
                     try {
-                        // Geocode het adres
-                        const geocodeResult = await geocodeAddress(adres);
+                        const { straat, huisnummer, postcode, plaats } = parseAddressString(adres);
+                        const tempAddress = { straat, huisnummer, postcode, plaats };
+                        
+                        // Check eerst cache
+                        let geocodeResult = getCachedGeocode(tempAddress);
+                        
+                        if (!geocodeResult) {
+                            // Geocode het adres als het niet in cache staat
+                            geocodeResult = await geocodeAddress(adres);
+                            
+                            if (geocodeResult) {
+                                // Sla op in cache voor volgende keer
+                                setCachedGeocode(tempAddress, geocodeResult.lat, geocodeResult.lon);
+                            }
+                            
+                            // Kleine delay om rate limiting te voorkomen (alleen bij nieuwe geocoding)
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        } else {
+                            cachedCount++;
+                        }
                         
                         if (geocodeResult) {
-                            const { straat, huisnummer, postcode, plaats } = parseAddressString(adres);
-                            
                             addressManager.addAddress({
                                 naam,
                                 straat,
@@ -1166,9 +1195,6 @@
                         errorCount++;
                         errors.push(`${naam || adres}: ${error.message}`);
                     }
-
-                    // Kleine delay om rate limiting te voorkomen
-                    await new Promise(resolve => setTimeout(resolve, 200));
                 }
 
                 // Update UI
@@ -1177,9 +1203,9 @@
 
                 // Toon resultaten
                 progressBar.style.width = '100%';
-                progressText.textContent = `Klaar! ${successCount} succesvol, ${errorCount} fouten`;
+                progressText.textContent = `Klaar! ${successCount} succesvol${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}, ${errorCount} fouten`;
 
-                let resultMessage = `✅ ${successCount} adres(sen) succesvol geïmporteerd!`;
+                let resultMessage = `✅ ${successCount} adres(sen) succesvol geïmporteerd${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}!`;
                 if (errorCount > 0) {
                     resultMessage += `<br>⚠️ ${errorCount} adres(sen) konden niet worden geïmporteerd.`;
                     if (errors.length > 0) {
@@ -1225,6 +1251,68 @@
         document.head.appendChild(style);
 
         /**
+         * Geocode cache systeem
+         * Slaat gegeocodeerde coördinaten op in localStorage om herhaalde geocoding te voorkomen
+         */
+        const GEOCODE_CACHE_KEY = 'geocodeCache';
+        
+        /**
+         * Genereer een cache key op basis van het adres
+         */
+        function getGeocodeCacheKey(address) {
+            // Gebruik een combinatie van adres componenten voor de cache key
+            const parts = [
+                address.straat || '',
+                address.huisnummer || '',
+                address.postcode || '',
+                address.plaats || ''
+            ].filter(p => p).map(p => p.toLowerCase().trim());
+            return parts.join('|');
+        }
+        
+        /**
+         * Haal gegeocodeerde coördinaten op uit de cache
+         */
+        function getCachedGeocode(address) {
+            try {
+                const cache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}');
+                const cacheKey = getGeocodeCacheKey(address);
+                const cached = cache[cacheKey];
+                
+                if (cached && cached.lat && cached.lon) {
+                    console.log(`📍 Cache hit voor adres: ${addressManager.getFullAddressString(address)}`);
+                    return { lat: cached.lat, lon: cached.lon };
+                }
+            } catch (error) {
+                console.error('Fout bij lezen van geocode cache:', error);
+            }
+            return null;
+        }
+        
+        /**
+         * Sla gegeocodeerde coördinaten op in de cache
+         */
+        function setCachedGeocode(address, lat, lon) {
+            try {
+                const cache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}');
+                const cacheKey = getGeocodeCacheKey(address);
+                cache[cacheKey] = { lat, lon, cachedAt: new Date().toISOString() };
+                localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                console.log(`💾 Coördinaten opgeslagen in cache voor: ${addressManager.getFullAddressString(address)}`);
+            } catch (error) {
+                console.error('Fout bij opslaan van geocode cache:', error);
+            }
+        }
+        
+        /**
+         * Wis de geocode cache (optioneel, voor debugging)
+         */
+        function clearGeocodeCache() {
+            localStorage.removeItem(GEOCODE_CACHE_KEY);
+            console.log('🗑️ Geocode cache gewist');
+        }
+
+        /**
          * Laad gedeelde adressen vanuit GitHub
          */
         async function loadSharedAddresses() {
@@ -1247,11 +1335,27 @@
                         const sharedAddresses = addressManager.getSharedAddresses();
                         const count = sharedAddresses.length;
                         
-                        // Geocode adressen zonder coördinaten
+                        // Laad eerst coördinaten uit cache
+                        let cachedCount = 0;
+                        for (const addr of sharedAddresses) {
+                            if (!addr.latitude || !addr.longitude) {
+                                const cached = getCachedGeocode(addr);
+                                if (cached) {
+                                    const index = addressManager.sharedAddresses.findIndex(a => a.id === addr.id);
+                                    if (index !== -1) {
+                                        addressManager.sharedAddresses[index].latitude = cached.lat;
+                                        addressManager.sharedAddresses[index].longitude = cached.lon;
+                                        cachedCount++;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Geocode alleen adressen zonder coördinaten (ook niet in cache)
                         const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
                         
                         if (addressesToGeocode.length > 0) {
-                            statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                            statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                             
                             let geocodedCount = 0;
                             for (let i = 0; i < addressesToGeocode.length; i++) {
@@ -1266,12 +1370,14 @@
                                         if (index !== -1) {
                                             addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
                                             addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
+                                            // Sla op in cache voor volgende keer
+                                            setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
                                             geocodedCount++;
                                         }
                                     }
                                     
                                     // Update progress
-                                    statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                    statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                     
                                     // Kleine delay om rate limiting te voorkomen
                                     await new Promise(resolve => setTimeout(resolve, 200));
@@ -1280,11 +1386,11 @@
                                 }
                             }
                             
-                            console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd`);
+                            console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd${cachedCount > 0 ? `, ${cachedCount} uit cache geladen` : ''}`);
                         }
                         
-                        console.log(`✅ ${count} gedeelde adressen geladen`);
-                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${addressesToGeocode.length > 0 ? ` (${geocodedCount} gegeocodeerd)` : ''}`;
+                        console.log(`✅ ${count} gedeelde adressen geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}`);
+                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}`;
                         statusDiv.style.color = 'var(--light-turquoise)';
                         
                         // Update UI en kaart
@@ -1313,11 +1419,27 @@
                             const sharedAddresses = addressManager.getSharedAddresses();
                             const count = sharedAddresses.length;
                             
-                            // Geocode adressen zonder coördinaten
+                            // Laad eerst coördinaten uit cache
+                            let cachedCount = 0;
+                            for (const addr of sharedAddresses) {
+                                if (!addr.latitude || !addr.longitude) {
+                                    const cached = getCachedGeocode(addr);
+                                    if (cached) {
+                                        const index = addressManager.sharedAddresses.findIndex(a => a.id === addr.id);
+                                        if (index !== -1) {
+                                            addressManager.sharedAddresses[index].latitude = cached.lat;
+                                            addressManager.sharedAddresses[index].longitude = cached.lon;
+                                            cachedCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Geocode alleen adressen zonder coördinaten (ook niet in cache)
                             const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
                             
                             if (addressesToGeocode.length > 0) {
-                                statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                 
                                 let geocodedCount = 0;
                                 for (let i = 0; i < addressesToGeocode.length; i++) {
@@ -1331,11 +1453,13 @@
                                             if (index !== -1) {
                                                 addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
                                                 addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
+                                                // Sla op in cache voor volgende keer
+                                                setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
                                                 geocodedCount++;
                                             }
                                         }
                                         
-                                        statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                        statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                         
                                         await new Promise(resolve => setTimeout(resolve, 200));
                                     } catch (error) {
@@ -1343,10 +1467,10 @@
                                     }
                                 }
                                 
-                                console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd`);
+                                console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd${cachedCount > 0 ? `, ${cachedCount} uit cache geladen` : ''}`);
                             }
                             
-                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${addressesToGeocode.length > 0 ? ` (${geocodedCount} gegeocodeerd)` : ''}`;
+                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}`;
                             statusDiv.style.color = 'var(--light-turquoise)';
                             updateSavedAddressesList();
                             updateMap();
