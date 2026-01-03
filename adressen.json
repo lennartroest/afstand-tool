@@ -1,0 +1,27 @@
+[
+  {
+    "id": "shared-1",
+    "naam": "Voorbeeld Adres 1",
+    "straat": "Damrak",
+    "huisnummer": "1",
+    "postcode": "1012 LG",
+    "plaats": "Amsterdam",
+    "latitude": 52.379189,
+    "longitude": 4.900278,
+    "toegevoegdOp": "2024-01-01T00:00:00.000Z",
+    "source": "shared"
+  },
+  {
+    "id": "shared-2",
+    "naam": "Voorbeeld Adres 2",
+    "straat": "Coolsingel",
+    "huisnummer": "40",
+    "postcode": "3011 AD",
+    "plaats": "Rotterdam",
+    "latitude": 51.9225,
+    "longitude": 4.4778,
+    "toegevoegdOp": "2024-01-01T00:00:00.000Z",
+    "source": "shared"
+  }
+]
+
