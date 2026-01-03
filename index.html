@@ -355,6 +355,7 @@
             <div class="header-content">
                 <h1>🗺️ Adres Afstand Tool</h1>
                 <p>Bekijk de afstanden tussen adressen op een kaart van Nederland</p>
+                <div id="sharedAddressesStatus" style="margin-top: 10px; font-size: 0.85rem; color: var(--gray);"></div>
             </div>
         </div>
 
@@ -398,6 +399,26 @@
             <!-- Adresbeheer Card -->
             <div class="card">
                 <h2>📍 Adresbeheer</h2>
+                
+                <!-- Gedeelde Adressen Configuratie -->
+                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">🔗 Gedeelde Adressenlijst</h3>
+                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                        Stel handmatig de GitHub URL in als automatische detectie niet werkt:
+                    </p>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="manualSharedUrl" placeholder="https://raw.githubusercontent.com/gebruikersnaam/repo/main/adressen.json" style="font-size: 0.9rem;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="setManualSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            URL Opslaan
+                        </button>
+                        <button class="btn btn-secondary" onclick="testSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            Test URL
+                        </button>
+                    </div>
+                    <div id="manualUrlMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                </div>
                 
                 <!-- Excel Upload Sectie -->
                 <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
@@ -947,15 +968,20 @@
 
             let html = '';
             addresses.forEach(address => {
+                const isShared = address.source === 'shared';
+                const badge = isShared ? '<span style="background: var(--light-turquoise); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px;">Gedeeld</span>' : '';
+                
                 html += `
-                    <div class="address-item">
+                    <div class="address-item" style="${isShared ? 'border-left: 3px solid var(--light-turquoise);' : ''}">
                         <div class="address-item-header">
                             <div>
-                                <div class="address-item-name">${address.naam || 'Geen naam'}</div>
+                                <div class="address-item-name">
+                                    ${address.naam || 'Geen naam'}${badge}
+                                </div>
                                 <div class="address-item-address">${addressManager.getFullAddressString(address)}</div>
                             </div>
                             <div class="address-item-actions">
-                                <button class="btn btn-danger btn-small" onclick="removeAddress('${address.id}')">Verwijder</button>
+                                ${!isShared ? `<button class="btn btn-danger btn-small" onclick="removeAddress('${address.id}')">Verwijder</button>` : '<span style="color: var(--gray); font-size: 0.85rem;">Alleen lezen</span>'}
                             </div>
                         </div>
                     </div>
@@ -969,6 +995,15 @@
          * Verwijder een adres
          */
         function removeAddress(id) {
+            // Controleer of het een gedeeld adres is
+            const sharedAddresses = addressManager.getSharedAddresses();
+            const isShared = sharedAddresses.some(addr => addr.id === id);
+            
+            if (isShared) {
+                alert('Dit is een gedeeld adres en kan niet worden verwijderd. Alleen lokale adressen kunnen worden verwijderd.');
+                return;
+            }
+            
             if (confirm('Weet je zeker dat je dit adres wilt verwijderen?')) {
                 addressManager.removeAddress(id);
                 updateSavedAddressesList();
@@ -1184,8 +1219,200 @@
         `;
         document.head.appendChild(style);
 
+        /**
+         * Laad gedeelde adressen vanuit GitHub
+         */
+        async function loadSharedAddresses() {
+            const sharedAddressesUrl = getSharedAddressesUrl();
+            const statusDiv = document.getElementById('sharedAddressesStatus');
+
+            console.log('loadSharedAddresses aangeroepen, URL:', sharedAddressesUrl);
+
+            if (sharedAddressesUrl) {
+                statusDiv.innerHTML = `⏳ Gedeelde adressen worden geladen...<br><small style="font-size: 0.75rem; opacity: 0.7;">URL: ${sharedAddressesUrl}</small>`;
+                
+                try {
+                    console.log('Probeer gedeelde adressen te laden van:', sharedAddressesUrl);
+                    const success = await addressManager.loadSharedAddresses(sharedAddressesUrl);
+                    
+                    console.log('Load resultaat:', success);
+                    console.log('Aantal gedeelde adressen:', addressManager.getSharedAddresses().length);
+                    
+                    if (success) {
+                        const count = addressManager.getSharedAddresses().length;
+                        console.log(`✅ ${count} gedeelde adressen geladen`);
+                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
+                        statusDiv.style.color = 'var(--light-turquoise)';
+                        
+                        // Update UI
+                        updateSavedAddressesList();
+                        updateMap();
+                    } else {
+                        console.error('Gedeelde adressen niet gevonden. Controleer de URL:', sharedAddressesUrl);
+                        statusDiv.innerHTML = `⚠️ Gedeelde adressen niet gevonden<br><small style="font-size: 0.75rem;">Controleer of de URL klopt: ${sharedAddressesUrl}</small>`;
+                        statusDiv.style.color = '#ff9800';
+                    }
+                } catch (error) {
+                    console.error('Fout bij laden gedeelde adressen:', error);
+                    statusDiv.innerHTML = `⚠️ Fout bij laden gedeelde adressen<br><small style="font-size: 0.75rem;">${error.message}</small>`;
+                    statusDiv.style.color = '#ff9800';
+                }
+            } else {
+                // Geen URL geconfigureerd
+                const savedUrl = localStorage.getItem('sharedAddressesUrl');
+                if (savedUrl) {
+                    console.log('Gevonden opgeslagen URL in localStorage:', savedUrl);
+                    // Probeer opnieuw met opgeslagen URL
+                    statusDiv.innerHTML = `⏳ Gedeelde adressen worden geladen...<br><small style="font-size: 0.75rem; opacity: 0.7;">URL: ${savedUrl}</small>`;
+                    try {
+                        const success = await addressManager.loadSharedAddresses(savedUrl);
+                        if (success) {
+                            const count = addressManager.getSharedAddresses().length;
+                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
+                            statusDiv.style.color = 'var(--light-turquoise)';
+                            updateSavedAddressesList();
+                            updateMap();
+                        } else {
+                            statusDiv.innerHTML = '⚠️ Gedeelde adressen niet gevonden. Controleer de URL in het configuratieveld hieronder.';
+                            statusDiv.style.color = '#ff9800';
+                        }
+                    } catch (error) {
+                        console.error('Fout bij laden met opgeslagen URL:', error);
+                        statusDiv.innerHTML = `⚠️ Fout bij laden: ${error.message}`;
+                        statusDiv.style.color = '#ff9800';
+                    }
+                } else {
+                    statusDiv.innerHTML = '💡 Tip: Upload adressen.json naar GitHub voor gedeelde lijst<br><small style="font-size: 0.75rem;">Of stel handmatig de URL in hieronder</small>';
+                    statusDiv.style.color = 'var(--gray)';
+                    console.log('💡 Geen URL gevonden. Gebruik het configuratieveld om een URL in te stellen.');
+                }
+            }
+        }
+
+        /**
+         * Haal de URL voor gedeelde adressen op
+         * Pas deze functie aan om je eigen GitHub URL te gebruiken!
+         */
+        function getSharedAddressesUrl() {
+            // OPTIE 1: Hardcoded URL (vervang met jouw GitHub repository URL)
+            // Uncomment de regel hieronder en vervang met jouw GitHub URL:
+            // return 'https://raw.githubusercontent.com/JOUW-GEBRUIKERSNAAM/JOUW-REPO/main/adressen.json';
+            
+            // OPTIE 2: Automatisch detecteren (werkt alleen op GitHub Pages)
+            if (window.location.hostname.includes('github.io')) {
+                const hostnameParts = window.location.hostname.split('.');
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                if (hostnameParts.length > 0 && pathParts.length > 0) {
+                    const username = hostnameParts[0];
+                    const repoName = pathParts[0];
+                    
+                    // Probeer eerst 'main', dan 'master' branch
+                    const branches = ['main', 'master'];
+                    for (const branch of branches) {
+                        const url = `https://raw.githubusercontent.com/${username}/${repoName}/${branch}/adressen.json`;
+                        console.log(`Probeer URL: ${url}`);
+                        // We proberen beide, maar return de eerste (main heeft prioriteit)
+                        return url;
+                    }
+                }
+            }
+            
+            // OPTIE 3: Probeer uit localStorage (voor handmatige configuratie)
+            const manualUrl = localStorage.getItem('sharedAddressesUrl');
+            if (manualUrl) {
+                console.log('Gebruik handmatig geconfigureerde URL:', manualUrl);
+                return manualUrl;
+            }
+            
+            // OPTIE 4: Geen gedeelde lijst (gebruik alleen lokale adressen)
+            return null;
+        }
+
+        /**
+         * Stel handmatig een gedeelde adressen URL in
+         */
+        function setManualSharedUrl() {
+            const urlInput = document.getElementById('manualSharedUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showMessage('manualUrlMessage', 'Voer een URL in', 'error');
+                return;
+            }
+            
+            if (!url.includes('raw.githubusercontent.com') && !url.endsWith('.json')) {
+                showMessage('manualUrlMessage', 'Voer een geldige GitHub Raw URL in (bijv. https://raw.githubusercontent.com/...)', 'error');
+                return;
+            }
+            
+            localStorage.setItem('sharedAddressesUrl', url);
+            showMessage('manualUrlMessage', 'URL opgeslagen! Herlaad de pagina om de adressen te laden.', 'success');
+            
+            // Laad direct opnieuw
+            setTimeout(async () => {
+                await loadSharedAddresses();
+                updateSavedAddressesList();
+                updateMap();
+            }, 500);
+        }
+
+        /**
+         * Test een gedeelde adressen URL
+         */
+        async function testSharedUrl() {
+            const urlInput = document.getElementById('manualSharedUrl');
+            const url = urlInput.value.trim() || localStorage.getItem('sharedAddressesUrl');
+            
+            if (!url) {
+                showMessage('manualUrlMessage', 'Voer eerst een URL in', 'error');
+                return;
+            }
+            
+            showMessage('manualUrlMessage', 'URL wordt getest...', 'loading');
+            
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data)) {
+                        // Sla automatisch op als het werkt
+                        localStorage.setItem('sharedAddressesUrl', url);
+                        showMessage('manualUrlMessage', `✅ URL werkt! ${data.length} adres(sen) gevonden. URL opgeslagen!`, 'success');
+                        
+                        // Laad direct de adressen
+                        setTimeout(async () => {
+                            await loadSharedAddresses();
+                            updateSavedAddressesList();
+                            updateMap();
+                        }, 500);
+                    } else {
+                        showMessage('manualUrlMessage', '⚠️ URL werkt, maar data is geen array', 'error');
+                    }
+                } else {
+                    showMessage('manualUrlMessage', `❌ URL niet gevonden (HTTP ${response.status})`, 'error');
+                }
+            } catch (error) {
+                showMessage('manualUrlMessage', `❌ Fout: ${error.message}`, 'error');
+            }
+        }
+
+        // Laad opgeslagen handmatige URL bij start
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUrl = localStorage.getItem('sharedAddressesUrl');
+            if (savedUrl) {
+                const urlInput = document.getElementById('manualSharedUrl');
+                if (urlInput) {
+                    urlInput.value = savedUrl;
+                    console.log('Opgeslagen URL geladen in input veld:', savedUrl);
+                }
+            }
+        });
+
         // Initialiseer bij laden
-        window.onload = () => {
+        window.onload = async () => {
+            // Laad eerst gedeelde adressen
+            await loadSharedAddresses();
+            
             updateSavedAddressesList();
             updateMap();
             // Setup autocomplete
