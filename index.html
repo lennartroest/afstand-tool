@@ -405,7 +405,7 @@
             </div>
 
             <!-- Adresbeheer Card -->
-            <div class="card">
+            <div class="card" style="display: none;">
                 <h2>📍 Adresbeheer</h2>
                 
                 <!-- Gedeelde Adressen Configuratie -->
@@ -1013,13 +1013,27 @@
             const filterCard = document.getElementById('buFilterCard');
             const filterButtons = document.getElementById('buFilterButtons');
             
+            console.log('🏢 updateBUFilter aangeroepen:', { 
+                aantalBUs: bus.length, 
+                bus: bus,
+                totaalAdressen: addressManager.getAllAddresses().length 
+            });
+            
+            // Toon altijd de filter card
+            filterCard.style.display = 'block';
+            
             if (bus.length === 0) {
-                filterCard.style.display = 'none';
+                // Geen BU's gevonden - toon melding
+                filterButtons.innerHTML = `
+                    <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">
+                        💡 Geen Business Units gevonden. Upload een Excel bestand met een BU kolom of voeg handmatig adressen met BU's toe.
+                    </p>
+                `;
+                console.log('⚠️ Geen BU\'s gevonden in adressen');
                 return;
             }
             
-            filterCard.style.display = 'block';
-            
+            // Er zijn BU's - toon filter knoppen
             let html = '<button class="btn btn-secondary" onclick="filterByBU(null)" style="width: auto; padding: 8px 16px; font-size: 0.9rem;' + (selectedBU === null ? ' background: var(--dark-teal); color: white;' : '') + '">Alle BU\'s</button>';
             
             bus.forEach(bu => {
@@ -1028,6 +1042,7 @@
             });
             
             filterButtons.innerHTML = html;
+            console.log(`✅ ${bus.length} BU filter knoppen getoond`);
         }
 
         /**
@@ -1670,12 +1685,13 @@
                         // Geocode alleen adressen zonder coördinaten (ook niet in cache)
                         const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
                         
+                        // Declareer variabelen buiten if-statement zodat ze altijd beschikbaar zijn
+                        let geocodedCount = 0;
+                        let cachedSuccessCount = 0;
+                        let cachedFailCount = 0;
+                        
                         if (addressesToGeocode.length > 0) {
                             statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
-                            
-                            let geocodedCount = 0;
-                            let cachedSuccessCount = 0;
-                            let cachedFailCount = 0;
                             
                             for (let i = 0; i < addressesToGeocode.length; i++) {
                                 const addr = addressesToGeocode[i];
@@ -1788,12 +1804,13 @@
                             // Geocode alleen adressen zonder coördinaten (ook niet in cache)
                             const addressesToGeocode = sharedAddresses.filter(addr => !addr.latitude || !addr.longitude);
                             
+                            // Declareer variabelen buiten if-statement zodat ze altijd beschikbaar zijn
+                            let geocodedCount = 0;
+                            let cachedSuccessCount = 0;
+                            let cachedFailCount = 0;
+                            
                             if (addressesToGeocode.length > 0) {
                                 statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
-                                
-                                let geocodedCount = 0;
-                                let cachedSuccessCount = 0;
-                                let cachedFailCount = 0;
                                 
                                 for (let i = 0; i < addressesToGeocode.length; i++) {
                                     const addr = addressesToGeocode[i];
