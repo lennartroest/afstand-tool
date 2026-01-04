@@ -53,6 +53,7 @@ class AddressManager {
             plaats: address.plaats || '',
             latitude: address.latitude || null,
             longitude: address.longitude || null,
+            bu: address.bu || null, // Business Unit
             toegevoegdOp: new Date().toISOString()
         };
         
@@ -191,6 +192,20 @@ class AddressManager {
         if (address.postcode) parts.push(address.postcode);
         if (address.plaats) parts.push(address.plaats);
         return parts.join(' ') + ', Nederland';
+    }
+
+    /**
+     * Haal alle unieke BU's op uit alle adressen
+     */
+    getAllBUs() {
+        const allAddresses = this.getAllAddresses();
+        const bus = new Set();
+        allAddresses.forEach(addr => {
+            if (addr.bu) {
+                bus.add(addr.bu);
+            }
+        });
+        return Array.from(bus).sort();
     }
 }
 
