@@ -380,6 +380,14 @@
                 <div id="searchMessage"></div>
             </div>
 
+            <!-- BU Filter Sectie -->
+            <div class="card" id="buFilterCard" style="display: none;">
+                <h2>🏢 Filter op Business Unit (BU)</h2>
+                <div id="buFilterButtons" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <!-- BU filter knoppen worden hier dynamisch toegevoegd -->
+                </div>
+            </div>
+
             <!-- Kaart Container -->
             <div class="map-container">
                 <div id="map"></div>
@@ -424,7 +432,7 @@
                 <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
                     <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">📁 Excel Bestand Uploaden</h3>
                     <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
-                        Upload een Excel bestand met 2 kolommen: <strong>Naam/Label</strong> en <strong>Volledig Adres</strong>
+                        Upload een Excel bestand met kolommen: <strong>Naam/Label</strong>, <strong>Volledig Adres</strong> en optioneel <strong>BU</strong> (Business Unit)
                     </p>
                     <div class="form-group">
                         <label for="excelFile">Selecteer Excel bestand (.xlsx of .xls):</label>
@@ -520,6 +528,7 @@
         let distanceLines = [];
         let autocompleteTimeout = null;
         let currentAutocompleteDropdown = null;
+        let selectedBU = null; // Geselecteerde Business Unit filter
 
         /**
          * Zoek adres suggesties voor autocomplete
@@ -686,7 +695,12 @@
             savedMarkers.forEach(marker => map.removeLayer(marker));
             savedMarkers = [];
 
-            const addresses = addressManager.getAllAddresses();
+            let addresses = addressManager.getAllAddresses();
+            
+            // Filter op BU als er een geselecteerd is
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
             
             addresses.forEach(address => {
                 if (address.latitude && address.longitude) {
@@ -694,13 +708,14 @@
                     const isShared = address.source === 'shared';
                     const markerColor = isShared ? '#4ECDC4' : '#2C5F6B';
                     const sharedBadge = isShared ? '<br><span style="background: #4ECDC4; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">🌐 Gedeeld</span>' : '';
+                    const buBadge = address.bu ? `<br><span style="background: var(--medium-teal); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">BU: ${address.bu}</span>` : '';
                     
                     const marker = L.marker([address.latitude, address.longitude], {
                         icon: createMarkerIcon(markerColor)
                     }).addTo(map);
                     
                     marker.bindPopup(`
-                        <strong>${address.naam || 'Geen naam'}</strong>${sharedBadge}<br>
+                        <strong>${address.naam || 'Geen naam'}</strong>${sharedBadge}${buBadge}<br>
                         ${addressManager.getFullAddressString(address)}
                     `);
                     
@@ -826,6 +841,7 @@
 
             showMessage('addressMessage', 'Adres succesvol toegevoegd!', 'success');
             updateSavedAddressesList();
+            updateBUFilter();
             updateMap();
         }
 
@@ -872,8 +888,11 @@
                 ${geocodeResult.displayName}
             `);
 
-            // Bereken afstanden
-            const addresses = addressManager.getAllAddresses();
+            // Bereken afstanden (filter op BU als nodig)
+            let addresses = addressManager.getAllAddresses();
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
             const distances = [];
 
             addresses.forEach(address => {
@@ -987,17 +1006,57 @@
         }
 
         /**
+         * Update de BU filter knoppen
+         */
+        function updateBUFilter() {
+            const bus = addressManager.getAllBUs();
+            const filterCard = document.getElementById('buFilterCard');
+            const filterButtons = document.getElementById('buFilterButtons');
+            
+            if (bus.length === 0) {
+                filterCard.style.display = 'none';
+                return;
+            }
+            
+            filterCard.style.display = 'block';
+            
+            let html = '<button class="btn btn-secondary" onclick="filterByBU(null)" style="width: auto; padding: 8px 16px; font-size: 0.9rem;' + (selectedBU === null ? ' background: var(--dark-teal); color: white;' : '') + '">Alle BU\'s</button>';
+            
+            bus.forEach(bu => {
+                const isActive = selectedBU === bu;
+                html += `<button class="btn btn-secondary" onclick="filterByBU('${bu.replace(/'/g, "\\'")}')" style="width: auto; padding: 8px 16px; font-size: 0.9rem;${isActive ? ' background: var(--dark-teal); color: white;' : ''}">${bu}</button>`;
+            });
+            
+            filterButtons.innerHTML = html;
+        }
+
+        /**
+         * Filter adressen op BU
+         */
+        function filterByBU(bu) {
+            selectedBU = bu;
+            updateBUFilter();
+            updateMap();
+            updateSavedAddressesList();
+        }
+
+        /**
          * Update de lijst met opgeslagen adressen
          */
         function updateSavedAddressesList() {
             const container = document.getElementById('savedAddressesList');
-            const addresses = addressManager.getAllAddresses();
+            let addresses = addressManager.getAllAddresses();
+            
+            // Filter op BU als er een geselecteerd is
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
 
             if (addresses.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📍</div>
-                        <p>Nog geen adressen opgeslagen</p>
+                        <p>${selectedBU !== null ? `Geen adressen gevonden voor BU: ${selectedBU}` : 'Nog geen adressen opgeslagen'}</p>
                     </div>
                 `;
                 return;
@@ -1007,13 +1066,14 @@
             addresses.forEach(address => {
                 const isShared = address.source === 'shared';
                 const badge = isShared ? '<span style="background: var(--light-turquoise); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px;">Gedeeld</span>' : '';
+                const buBadge = address.bu ? `<span style="background: var(--medium-teal); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px;">BU: ${address.bu}</span>` : '';
                 
                 html += `
                     <div class="address-item" style="${isShared ? 'border-left: 3px solid var(--light-turquoise);' : ''}">
                         <div class="address-item-header">
                             <div>
                                 <div class="address-item-name">
-                                    ${address.naam || 'Geen naam'}${badge}
+                                    ${address.naam || 'Geen naam'}${badge}${buBadge}
                                 </div>
                                 <div class="address-item-address">${addressManager.getFullAddressString(address)}</div>
                             </div>
@@ -1044,6 +1104,7 @@
             if (confirm('Weet je zeker dat je dit adres wilt verwijderen?')) {
                 addressManager.removeAddress(id);
                 updateSavedAddressesList();
+                updateBUFilter();
                 updateMap();
                 
                 // Reset search als nodig
@@ -1124,6 +1185,7 @@
                 
                 let naamColIndex = -1;
                 let adresColIndex = -1;
+                let buColIndex = -1;
 
                 // Zoek kolommen op naam
                 headers.forEach((header, index) => {
@@ -1133,11 +1195,15 @@
                     if (header.includes('adres') || header.includes('address') || header.includes('volledig')) {
                         adresColIndex = index;
                     }
+                    if (header.includes('bu') || header.includes('business unit') || header.includes('businessunit')) {
+                        buColIndex = index;
+                    }
                 });
 
-                // Als niet gevonden, gebruik eerste twee kolommen
+                // Als niet gevonden, gebruik eerste kolommen
                 if (naamColIndex === -1) naamColIndex = 0;
                 if (adresColIndex === -1) adresColIndex = 1;
+                // BU kolom is optioneel, blijft -1 als niet gevonden
 
                 // Verzamel adressen
                 const addressesToImport = [];
@@ -1145,9 +1211,10 @@
                     const row = jsonData[i];
                     const naam = row[naamColIndex] ? String(row[naamColIndex]).trim() : '';
                     const adres = row[adresColIndex] ? String(row[adresColIndex]).trim() : '';
+                    const bu = buColIndex !== -1 && row[buColIndex] ? String(row[buColIndex]).trim() : null;
                     
                     if (adres) {
-                        addressesToImport.push({ naam, adres });
+                        addressesToImport.push({ naam, adres, bu });
                     }
                 }
 
@@ -1166,7 +1233,7 @@
                 const errors = [];
 
                 for (let i = 0; i < addressesToImport.length; i++) {
-                    const { naam, adres } = addressesToImport[i];
+                    const { naam, adres, bu } = addressesToImport[i];
                     
                     // Update progress
                     const progress = ((i + 1) / addressesToImport.length) * 100;
@@ -1203,7 +1270,8 @@
                                 postcode,
                                 plaats,
                                 latitude: geocodeResult.lat,
-                                longitude: geocodeResult.lon
+                                longitude: geocodeResult.lon,
+                                bu: bu || null
                             });
                             
                             successCount++;
@@ -1219,6 +1287,7 @@
 
                 // Update UI
                 updateSavedAddressesList();
+                updateBUFilter();
                 updateMap();
 
                 // Toon resultaten
@@ -1294,23 +1363,39 @@
         
         /**
          * Verwijder oude cache entries als de cache te groot wordt (LRU - Least Recently Used)
+         * Controleert zowel op aantal entries als op totale grootte
          */
         function cleanupCache(cache) {
             const entries = Object.keys(cache);
+            const cacheStr = JSON.stringify(cache);
+            const sizeInBytes = new Blob([cacheStr]).size;
+            const sizeInKB = sizeInBytes / 1024;
             
-            if (entries.length > MAX_CACHE_SIZE) {
+            // Schoon op als we te veel entries hebben OF als de cache te groot wordt (>4MB om ruimte te laten)
+            const shouldCleanup = entries.length > MAX_CACHE_SIZE || sizeInKB > 4000;
+            
+            if (shouldCleanup) {
                 // Sorteer entries op cachedAt (oudste eerst)
                 const sortedEntries = entries
                     .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
                     .sort((a, b) => a.cachedAt - b.cachedAt);
                 
-                // Verwijder de oudste 20% van de entries
-                const toRemove = Math.floor(entries.length * 0.2);
+                // Verwijder meer entries als de cache groot is (tot 50% als het echt groot is)
+                let removePercentage = 0.2; // Standaard 20%
+                if (sizeInKB > 4000) {
+                    removePercentage = 0.5; // Verwijder 50% als cache > 4MB
+                } else if (entries.length > MAX_CACHE_SIZE * 1.2) {
+                    removePercentage = 0.3; // Verwijder 30% als we ver over de limiet zitten
+                }
+                
+                const toRemove = Math.max(1, Math.floor(entries.length * removePercentage));
+                
                 for (let i = 0; i < toRemove; i++) {
                     delete cache[sortedEntries[i].key];
                 }
                 
-                console.log(`🧹 Cache opgeschoond: ${toRemove} oude entries verwijderd`);
+                const reason = sizeInKB > 4000 ? `grootte (${sizeInKB.toFixed(1)} KB)` : `aantal (${entries.length} entries)`;
+                console.log(`🧹 Cache opgeschoond: ${toRemove} oude entries verwijderd vanwege ${reason}`);
             }
         }
         
@@ -1370,6 +1455,10 @@
                     cache = {};
                 }
                 
+                // PROACTIEF: Cleanup oude entries VOORDAT we het nieuwe adres toevoegen
+                // Dit voorkomt dat de cache vol raakt tijdens batch-geocoderen
+                cleanupCache(cache);
+                
                 const cacheKey = getGeocodeCacheKey(address);
                 
                 // Compressie: sla alleen essentiële data op (lat, lon, timestamp voor LRU)
@@ -1379,7 +1468,7 @@
                     cachedAt: Date.now() // Gebruik timestamp voor LRU cleanup
                 };
                 
-                // Cleanup oude entries voordat we opslaan
+                // Cleanup nogmaals na toevoegen (voor het geval dat)
                 cleanupCache(cache);
                 
                 // Probeer op te slaan met error handling
@@ -1423,6 +1512,38 @@
                         }
                     } catch (retryError) {
                         console.error('❌ Cache cleanup gefaald:', retryError);
+                        
+                        // Laatste redmiddel: probeer de cache volledig te wissen en alleen dit adres op te slaan
+                        if (retryError.name === 'QuotaExceededError' || retryError.code === 22) {
+                            try {
+                                console.warn('⚠️ Cache volledig vol, probeer laatste redmiddel cleanup...');
+                                // Verwijder 75% van de oudste entries
+                                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                                if (cacheStr) {
+                                    const cache = JSON.parse(cacheStr);
+                                    const entries = Object.keys(cache);
+                                    const sortedEntries = entries
+                                        .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                                        .sort((a, b) => a.cachedAt - b.cachedAt);
+                                    
+                                    const toRemove = Math.floor(entries.length * 0.75);
+                                    for (let i = 0; i < toRemove; i++) {
+                                        delete cache[sortedEntries[i].key];
+                                    }
+                                    
+                                    // Voeg het nieuwe adres toe
+                                    const cacheKey = getGeocodeCacheKey(address);
+                                    cache[cacheKey] = { lat: lat, lon: lon, cachedAt: Date.now() };
+                                    
+                                    localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                                    console.log(`✅ Coördinaten opgeslagen na agressieve cleanup (${toRemove} entries verwijderd)`);
+                                    return true;
+                                }
+                            } catch (finalError) {
+                                console.error('❌ Zelfs agressieve cleanup gefaald:', finalError);
+                            }
+                        }
+                        
                         // Als zelfs cleanup niet werkt, log een waarschuwing
                         console.warn('⚠️ Kon cache niet opslaan. Cache is mogelijk vol. Overweeg handmatige cleanup.');
                     }
@@ -1553,6 +1674,9 @@
                             statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                             
                             let geocodedCount = 0;
+                            let cachedSuccessCount = 0;
+                            let cachedFailCount = 0;
+                            
                             for (let i = 0; i < addressesToGeocode.length; i++) {
                                 const addr = addressesToGeocode[i];
                                 const addressString = addressManager.getFullAddressString(addr);
@@ -1565,14 +1689,36 @@
                                         if (index !== -1) {
                                             addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
                                             addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
-                                            // Sla op in cache voor volgende keer
-                                            setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
+                                            
+                                            // Sla op in cache voor volgende keer - met retry bij falen
+                                            let cacheSuccess = false;
+                                            let retries = 0;
+                                            const maxRetries = 3;
+                                            
+                                            while (!cacheSuccess && retries < maxRetries) {
+                                                cacheSuccess = setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
+                                                if (!cacheSuccess && retries < maxRetries - 1) {
+                                                    console.warn(`⚠️ Cache opslaan gefaald voor ${addr.naam || addressString}, probeer ${retries + 1}/${maxRetries}...`);
+                                                    // Wacht even voordat we opnieuw proberen
+                                                    await new Promise(resolve => setTimeout(resolve, 100));
+                                                }
+                                                retries++;
+                                            }
+                                            
+                                            if (cacheSuccess) {
+                                                cachedSuccessCount++;
+                                            } else {
+                                                cachedFailCount++;
+                                                console.error(`❌ Kon cache niet opslaan voor ${addr.naam || addressString} na ${maxRetries} pogingen`);
+                                            }
+                                            
                                             geocodedCount++;
                                         }
                                     }
                                     
                                     // Update progress
-                                    statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                    const cacheStatus = cachedFailCount > 0 ? ` (${cachedFailCount} cache fouten)` : '';
+                                    statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd${cacheStatus}...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                     
                                     // Kleine delay om rate limiting te voorkomen
                                     await new Promise(resolve => setTimeout(resolve, 200));
@@ -1581,15 +1727,24 @@
                                 }
                             }
                             
+                            if (cachedFailCount > 0) {
+                                console.warn(`⚠️ ${cachedFailCount} adressen konden niet worden gecached. Cache is mogelijk vol.`);
+                            }
+                            
                             console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd${cachedCount > 0 ? `, ${cachedCount} uit cache geladen` : ''}`);
                         }
                         
                         console.log(`✅ ${count} gedeelde adressen geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}`);
-                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}`;
+                        const cacheWarning = cachedFailCount > 0 ? ` ⚠️ ${cachedFailCount} niet gecached` : '';
+                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}${cacheWarning}`;
                         statusDiv.style.color = 'var(--light-turquoise)';
+                        
+                        // Update cache statistieken na laden
+                        refreshCacheStats();
                         
                         // Update UI en kaart
                         updateSavedAddressesList();
+                        updateBUFilter();
                         updateMap();
                     } else {
                         console.error('Gedeelde adressen niet gevonden. Controleer de URL:', sharedAddressesUrl);
@@ -1637,6 +1792,9 @@
                                 statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${addressesToGeocode.length} worden gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                 
                                 let geocodedCount = 0;
+                                let cachedSuccessCount = 0;
+                                let cachedFailCount = 0;
+                                
                                 for (let i = 0; i < addressesToGeocode.length; i++) {
                                     const addr = addressesToGeocode[i];
                                     const addressString = addressManager.getFullAddressString(addr);
@@ -1648,13 +1806,36 @@
                                             if (index !== -1) {
                                                 addressManager.sharedAddresses[index].latitude = geocodeResult.lat;
                                                 addressManager.sharedAddresses[index].longitude = geocodeResult.lon;
-                                                // Sla op in cache voor volgende keer
-                                                setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
+                                                
+                                                // Sla op in cache voor volgende keer - met retry bij falen
+                                                let cacheSuccess = false;
+                                                let retries = 0;
+                                                const maxRetries = 3;
+                                                
+                                                while (!cacheSuccess && retries < maxRetries) {
+                                                    cacheSuccess = setCachedGeocode(addr, geocodeResult.lat, geocodeResult.lon);
+                                                    if (!cacheSuccess && retries < maxRetries - 1) {
+                                                        console.warn(`⚠️ Cache opslaan gefaald voor ${addr.naam || addressString}, probeer ${retries + 1}/${maxRetries}...`);
+                                                        // Wacht even voordat we opnieuw proberen
+                                                        await new Promise(resolve => setTimeout(resolve, 100));
+                                                    }
+                                                    retries++;
+                                                }
+                                                
+                                                if (cacheSuccess) {
+                                                    cachedSuccessCount++;
+                                                } else {
+                                                    cachedFailCount++;
+                                                    console.error(`❌ Kon cache niet opslaan voor ${addr.naam || addressString} na ${maxRetries} pogingen`);
+                                                }
+                                                
                                                 geocodedCount++;
                                             }
                                         }
                                         
-                                        statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
+                                        // Update progress
+                                        const cacheStatus = cachedFailCount > 0 ? ` (${cachedFailCount} cache fouten)` : '';
+                                        statusDiv.innerHTML = `⏳ ${count} adres(sen) geladen${cachedCount > 0 ? `, ${cachedCount} uit cache` : ''}, ${i + 1}/${addressesToGeocode.length} gegeocodeerd${cacheStatus}...<br><small style="font-size: 0.75rem; opacity: 0.7;">Dit kan even duren</small>`;
                                         
                                         await new Promise(resolve => setTimeout(resolve, 200));
                                     } catch (error) {
@@ -1662,12 +1843,22 @@
                                     }
                                 }
                                 
+                                if (cachedFailCount > 0) {
+                                    console.warn(`⚠️ ${cachedFailCount} adressen konden niet worden gecached. Cache is mogelijk vol.`);
+                                }
+                                
                                 console.log(`✅ ${geocodedCount} van ${addressesToGeocode.length} adressen gegeocodeerd${cachedCount > 0 ? `, ${cachedCount} uit cache geladen` : ''}`);
                             }
                             
-                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}`;
+                            const cacheWarning = cachedFailCount > 0 ? ` ⚠️ ${cachedFailCount} niet gecached` : '';
+                            statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}${addressesToGeocode.length > 0 ? `, ${geocodedCount} gegeocodeerd` : ''}${cacheWarning}`;
                             statusDiv.style.color = 'var(--light-turquoise)';
+                            
+                            // Update cache statistieken na laden
+                            refreshCacheStats();
+                            
                             updateSavedAddressesList();
+                            updateBUFilter();
                             updateMap();
                         } else {
                             statusDiv.innerHTML = '⚠️ Gedeelde adressen niet gevonden. Controleer de URL in het configuratieveld hieronder.';
@@ -1695,7 +1886,14 @@
             // Uncomment de regel hieronder en vervang met jouw GitHub URL:
             // return 'https://raw.githubusercontent.com/JOUW-GEBRUIKERSNAAM/JOUW-REPO/main/adressen.json';
             
-            // OPTIE 2: Automatisch detecteren (werkt alleen op GitHub Pages)
+            // OPTIE 2: Lokale adressen.json gebruiken bij development (localhost)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                const localUrl = './adressen.json';
+                console.log('🔧 Development modus: gebruik lokale adressen.json:', localUrl);
+                return localUrl;
+            }
+            
+            // OPTIE 3: Automatisch detecteren (werkt alleen op GitHub Pages)
             if (window.location.hostname.includes('github.io')) {
                 const hostnameParts = window.location.hostname.split('.');
                 const pathParts = window.location.pathname.split('/').filter(p => p);
@@ -1714,14 +1912,14 @@
                 }
             }
             
-            // OPTIE 3: Probeer uit localStorage (voor handmatige configuratie)
+            // OPTIE 4: Probeer uit localStorage (voor handmatige configuratie)
             const manualUrl = localStorage.getItem('sharedAddressesUrl');
             if (manualUrl) {
                 console.log('Gebruik handmatig geconfigureerde URL:', manualUrl);
                 return manualUrl;
             }
             
-            // OPTIE 4: Geen gedeelde lijst (gebruik alleen lokale adressen)
+            // OPTIE 5: Geen gedeelde lijst (gebruik alleen lokale adressen)
             return null;
         }
 
@@ -1824,6 +2022,7 @@
             refreshCacheStats();
             
             updateSavedAddressesList();
+            updateBUFilter();
             updateMap();
             // Setup autocomplete
             setupAutocomplete('searchAddress', 'autocompleteDropdown');
