@@ -7,7 +7,8 @@
     "postcode": "6621 BN",
     "plaats": "DREUMEL",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.593738Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674175Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8554931,
     "longitude": 5.4334955
   },
@@ -19,7 +20,8 @@
     "postcode": "3082 GR",
     "plaats": "ROTTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.593865Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674295Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8904092,
     "longitude": 4.4714382
   },
@@ -31,7 +33,8 @@
     "postcode": "3911 ER",
     "plaats": "RHENEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.593958Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674382Z",
+    "bu": "Kwaliteit",
     "latitude": 51.9545121,
     "longitude": 5.5792326
   },
@@ -43,7 +46,8 @@
     "postcode": "6813 GT",
     "plaats": "ARNHEM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594035Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674462Z",
+    "bu": "Kwaliteit",
     "latitude": 51.997954,
     "longitude": 5.878792
   },
@@ -55,7 +59,8 @@
     "postcode": "3523 VA",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594108Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674579Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0713817,
     "longitude": 5.1226232
   },
@@ -67,7 +72,8 @@
     "postcode": "3585 LE",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594186Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674682Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0725626,
     "longitude": 5.1488129
   },
@@ -79,7 +85,8 @@
     "postcode": "9302 AV",
     "plaats": "RODEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594254Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674782Z",
+    "bu": "Kwaliteit",
     "latitude": 53.1277256,
     "longitude": 6.4057299
   },
@@ -91,7 +98,8 @@
     "postcode": "6916 LK",
     "plaats": "TOLKAMER",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594319Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674879Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8563866,
     "longitude": 6.1035358
   },
@@ -103,7 +111,8 @@
     "postcode": "3512 NJ",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594382Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.674974Z",
+    "bu": "Kwaliteit",
     "latitude": 52.089408,
     "longitude": 5.1273245
   },
@@ -115,7 +124,8 @@
     "postcode": "1051 XZ",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594447Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675051Z",
+    "bu": "Kwaliteit",
     "latitude": 52.3818199,
     "longitude": 4.8721348
   },
@@ -127,7 +137,8 @@
     "postcode": "1314 JK",
     "plaats": "ALMERE",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594510Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675120Z",
+    "bu": "Kwaliteit",
     "latitude": 52.3783328,
     "longitude": 5.2063201
   },
@@ -139,7 +150,8 @@
     "postcode": "5012 GM",
     "plaats": "TILBURG",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594575Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675187Z",
+    "bu": "Kwaliteit",
     "latitude": 51.5823527,
     "longitude": 5.0979083
   },
@@ -151,7 +163,8 @@
     "postcode": "5038 BP",
     "plaats": "TILBURG",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594639Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675262Z",
+    "bu": "Kwaliteit",
     "latitude": 51.5571831,
     "longitude": 5.0885758
   },
@@ -163,7 +176,8 @@
     "postcode": "3731 EL",
     "plaats": "DE BILT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594700Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675329Z",
+    "bu": "Kwaliteit",
     "latitude": 52.1055339,
     "longitude": 5.1723303
   },
@@ -175,7 +189,8 @@
     "postcode": "3531 JT",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594761Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675393Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0901408,
     "longitude": 5.0915592
   },
@@ -187,7 +202,8 @@
     "postcode": "3523 TJ",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594820Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675456Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0716455,
     "longitude": 5.1200278
   },
@@ -199,7 +215,8 @@
     "postcode": "3515 XK",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594880Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.675519Z",
+    "bu": "Kwaliteit"
   },
   {
     "id": "shared-18",
@@ -209,7 +226,8 @@
     "postcode": "5102 XW",
     "plaats": "DONGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594940Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675583Z",
+    "bu": "Kwaliteit",
     "latitude": 51.6374766,
     "longitude": 4.9188101
   },
@@ -221,7 +239,8 @@
     "postcode": "3814 PK",
     "plaats": "AMERSFOORT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.594999Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675645Z",
+    "bu": "Kwaliteit",
     "latitude": 52.1627923,
     "longitude": 5.3960933
   },
@@ -233,7 +252,8 @@
     "postcode": "3723 LS",
     "plaats": "BILTHOVEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595059Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675708Z",
+    "bu": "Kwaliteit",
     "latitude": 52.1411706,
     "longitude": 5.2258156
   },
@@ -245,7 +265,8 @@
     "postcode": "4101 JG",
     "plaats": "CULEMBORG",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595120Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675772Z",
+    "bu": "Kwaliteit",
     "latitude": 51.9589206,
     "longitude": 5.236697
   },
@@ -257,7 +278,8 @@
     "postcode": "1078 AM",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595181Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675835Z",
+    "bu": "Kwaliteit",
     "latitude": 52.3479299,
     "longitude": 4.8982411
   },
@@ -269,7 +291,8 @@
     "postcode": "6541 PR",
     "plaats": "NIJMEGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595240Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.675900Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8449826,
     "longitude": 5.8493183
   },
@@ -281,7 +304,8 @@
     "postcode": "6654 AG",
     "plaats": "AFFERDEN GLD",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595298Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.675964Z",
+    "bu": "Kwaliteit"
   },
   {
     "id": "shared-25",
@@ -291,7 +315,8 @@
     "postcode": "3035 AV",
     "plaats": "ROTTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595583Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676129Z",
+    "bu": "Kwaliteit",
     "latitude": 51.9334021,
     "longitude": 4.4779638
   },
@@ -303,7 +328,8 @@
     "postcode": "1054 WN",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595666Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676217Z",
+    "bu": "Kwaliteit",
     "latitude": 52.3616571,
     "longitude": 4.8631787
   },
@@ -315,7 +341,8 @@
     "postcode": "3705 ZJ",
     "plaats": "ZEIST",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595734Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676291Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0974784,
     "longitude": 5.2210245
   },
@@ -327,7 +354,8 @@
     "postcode": "2518 GG",
     "plaats": "'S-GRAVENHAGE",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595813Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676368Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0825673,
     "longitude": 4.2918547
   },
@@ -339,7 +367,8 @@
     "postcode": "3514 VB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595879Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.676438Z",
+    "bu": "Kwaliteit"
   },
   {
     "id": "shared-30",
@@ -349,7 +378,8 @@
     "postcode": "3511 RR",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.595947Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.676507Z",
+    "bu": "Kwaliteit"
   },
   {
     "id": "shared-31",
@@ -359,7 +389,8 @@
     "postcode": "3523 VD",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596011Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676573Z",
+    "bu": "Kwaliteit",
     "latitude": 52.0711407,
     "longitude": 5.1248426
   },
@@ -371,7 +402,8 @@
     "postcode": "6521 MA",
     "plaats": "NIJMEGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596073Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676637Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8379384,
     "longitude": 5.8789027
   },
@@ -383,7 +415,8 @@
     "postcode": "3161 JJ",
     "plaats": "RHOON",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596135Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676700Z",
+    "bu": "Kwaliteit",
     "latitude": 51.8526045,
     "longitude": 4.4274595
   },
@@ -395,7 +428,8 @@
     "postcode": "3852 XC",
     "plaats": "ERMELO",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596196Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676764Z",
+    "bu": "Kwaliteit",
     "latitude": 52.2979991,
     "longitude": 5.6343496
   },
@@ -407,7 +441,8 @@
     "postcode": "3526 LB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596258Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676827Z",
+    "bu": "Sturen",
     "latitude": 52.0663032,
     "longitude": 5.1104317
   },
@@ -419,7 +454,8 @@
     "postcode": "6961 AG",
     "plaats": "EERBEEK",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596320Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676892Z",
+    "bu": "Sturen",
     "latitude": 52.1112844,
     "longitude": 6.0556233
   },
@@ -431,7 +467,8 @@
     "postcode": "2321 KL",
     "plaats": "LEIDEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596386Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.676955Z",
+    "bu": "Sturen",
     "latitude": 52.143306,
     "longitude": 4.4927598
   },
@@ -443,7 +480,8 @@
     "postcode": "1106 LW",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596451Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677021Z",
+    "bu": "Sturen",
     "latitude": 52.3010843,
     "longitude": 4.9630877
   },
@@ -455,7 +493,8 @@
     "postcode": "6533 SJ",
     "plaats": "NIJMEGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596529Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677085Z",
+    "bu": "Sturen",
     "latitude": 51.8165399,
     "longitude": 5.8480829
   },
@@ -467,7 +506,8 @@
     "postcode": "3762 DJ",
     "plaats": "SOEST",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596587Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677163Z",
+    "bu": "Sturen",
     "latitude": 52.1848634,
     "longitude": 5.2733555
   },
@@ -479,7 +519,8 @@
     "postcode": "3573 BE",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596646Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677227Z",
+    "bu": "Sturen",
     "latitude": 52.10942,
     "longitude": 5.145669
   },
@@ -491,7 +532,8 @@
     "postcode": "2574 JH",
     "plaats": "'S-GRAVENHAGE",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596707Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677300Z",
+    "bu": "Sturen",
     "latitude": 52.0666526,
     "longitude": 4.2719902
   },
@@ -503,7 +545,8 @@
     "postcode": "3039 EH",
     "plaats": "ROTTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596766Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677370Z",
+    "bu": "Sturen",
     "latitude": 51.9301573,
     "longitude": 4.4574422
   },
@@ -515,7 +558,8 @@
     "postcode": "3514 CB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596824Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677437Z",
+    "bu": "Sturen",
     "latitude": 52.0993828,
     "longitude": 5.1175876
   },
@@ -527,7 +571,8 @@
     "postcode": "3513 EP",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596882Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677499Z",
+    "bu": "Sturen",
     "latitude": 52.0997723,
     "longitude": 5.1093737
   },
@@ -539,7 +584,8 @@
     "postcode": "6717 ZX",
     "plaats": "EDE GLD",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596939Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.677561Z",
+    "bu": "Sturen"
   },
   {
     "id": "shared-47",
@@ -549,7 +595,8 @@
     "postcode": "3584 AB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.596999Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677627Z",
+    "bu": "Sturen",
     "latitude": 52.0786502,
     "longitude": 5.1483648
   },
@@ -561,7 +608,8 @@
     "postcode": "3555 AB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597058Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.677697Z",
+    "bu": "Sturen"
   },
   {
     "id": "shared-49",
@@ -571,7 +619,8 @@
     "postcode": "4204 CT",
     "plaats": "GORINCHEM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597117Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677764Z",
+    "bu": "Sturen",
     "latitude": 51.8348944,
     "longitude": 4.9545361
   },
@@ -583,7 +632,8 @@
     "postcode": "3532 EL",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597174Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677828Z",
+    "bu": "Sturen",
     "latitude": 52.0947207,
     "longitude": 5.0927614
   },
@@ -595,7 +645,8 @@
     "postcode": "3862 EB",
     "plaats": "NIJKERK GLD",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597231Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.677894Z",
+    "bu": "Sturen"
   },
   {
     "id": "shared-52",
@@ -605,7 +656,8 @@
     "postcode": "5251 BB",
     "plaats": "VLIJMEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597289Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.677961Z",
+    "bu": "Sturen",
     "latitude": 51.6964474,
     "longitude": 5.2243876
   },
@@ -617,7 +669,8 @@
     "postcode": "3572 XP",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597346Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678029Z",
+    "bu": "Sturen",
     "latitude": 52.1000046,
     "longitude": 5.1366483
   },
@@ -629,7 +682,8 @@
     "postcode": "6836 TK",
     "plaats": "ARNHEM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597404Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678095Z",
+    "bu": "Sturen",
     "latitude": 51.9413164,
     "longitude": 5.9027348
   },
@@ -641,7 +695,8 @@
     "postcode": "3553 JG",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597462Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.678164Z",
+    "bu": "Sturen"
   },
   {
     "id": "shared-56",
@@ -651,7 +706,8 @@
     "postcode": "5691 TR",
     "plaats": "SON",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597520Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678232Z",
+    "bu": "Sturen",
     "latitude": 51.5132666,
     "longitude": 5.4952636
   },
@@ -663,7 +719,8 @@
     "postcode": "3061 CW",
     "plaats": "ROTTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597586Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678298Z",
+    "bu": "Sturen",
     "latitude": 51.9238406,
     "longitude": 4.4981051
   },
@@ -675,7 +732,8 @@
     "postcode": "3842 LK",
     "plaats": "HARDERWIJK",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597647Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678366Z",
+    "bu": "Sturen",
     "latitude": 52.3463937,
     "longitude": 5.6284373
   },
@@ -687,7 +745,8 @@
     "postcode": "7631 LC",
     "plaats": "OOTMARSUM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597706Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678434Z",
+    "bu": "Sturen",
     "latitude": 52.4033238,
     "longitude": 6.9075461
   },
@@ -699,7 +758,8 @@
     "postcode": "6661 PM",
     "plaats": "ELST GLD",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597763Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.678502Z",
+    "bu": "Sturen"
   },
   {
     "id": "shared-61",
@@ -709,7 +769,8 @@
     "postcode": "1078 XM",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597822Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678569Z",
+    "bu": "Sturen",
     "latitude": 52.3461349,
     "longitude": 4.8902038
   },
@@ -721,7 +782,8 @@
     "postcode": "6544 WX",
     "plaats": "NIJMEGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597881Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678638Z",
+    "bu": "Sturen",
     "latitude": 51.8294995,
     "longitude": 5.8156644
   },
@@ -733,7 +795,8 @@
     "postcode": "3543 GE",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597938Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678707Z",
+    "bu": "Sturen",
     "latitude": 52.1019001,
     "longitude": 5.0485871
   },
@@ -745,7 +808,8 @@
     "postcode": "1054 LC",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.597996Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678785Z",
+    "bu": "Sturen",
     "latitude": 52.3580435,
     "longitude": 4.8590375
   },
@@ -757,7 +821,8 @@
     "postcode": "6596 GT",
     "plaats": "MILSBEEK",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598054Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678850Z",
+    "bu": "Overig",
     "latitude": 51.729742,
     "longitude": 5.9513002
   },
@@ -769,7 +834,8 @@
     "postcode": "1231 KJ",
     "plaats": "LOOSDRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598114Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678922Z",
+    "bu": "Overig",
     "latitude": 52.2082457,
     "longitude": 5.1346752
   },
@@ -781,7 +847,8 @@
     "postcode": "2394 BD",
     "plaats": "HAZERSWOUDE-RIJNDIJK",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598172Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.678987Z",
+    "bu": "Overig",
     "latitude": 52.1285791,
     "longitude": 4.5872358
   },
@@ -793,7 +860,8 @@
     "postcode": "3834 BZ",
     "plaats": "LEUSDEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598232Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679048Z",
+    "bu": "Overig",
     "latitude": 52.1274469,
     "longitude": 5.4290617
   },
@@ -805,7 +873,8 @@
     "postcode": "6543 VR",
     "plaats": "NIJMEGEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598290Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679108Z",
+    "bu": "Overig",
     "latitude": 51.836114,
     "longitude": 5.8300586
   },
@@ -817,7 +886,8 @@
     "postcode": "3734 GG",
     "plaats": "DEN DOLDER",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598350Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679170Z",
+    "bu": "Overig",
     "latitude": 52.1389457,
     "longitude": 5.2390862
   },
@@ -829,7 +899,8 @@
     "postcode": "6564 BG",
     "plaats": "HEILIG LANDSTICHTING",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598408Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679232Z",
+    "bu": "Overig",
     "latitude": 51.8149909,
     "longitude": 5.8853253
   },
@@ -841,7 +912,8 @@
     "postcode": "3523 GM",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598467Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679300Z",
+    "bu": "Overig",
     "latitude": 52.0721636,
     "longitude": 5.1261863
   },
@@ -853,7 +925,8 @@
     "postcode": "6663 PG",
     "plaats": "LENT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598525Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679362Z",
+    "bu": "Overig",
     "latitude": 51.8710188,
     "longitude": 5.8509316
   },
@@ -865,7 +938,8 @@
     "postcode": "1032 JE",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598583Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679422Z",
+    "bu": "Overig",
     "latitude": 52.3977873,
     "longitude": 4.9097589
   },
@@ -877,7 +951,8 @@
     "postcode": "3515 HB",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598642Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679490Z",
+    "bu": "Overig",
     "latitude": 52.1063002,
     "longitude": 5.1142125
   },
@@ -889,7 +964,8 @@
     "postcode": "2341 CV",
     "plaats": "OEGSTGEEST",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598700Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679551Z",
+    "bu": "Overig",
     "latitude": 52.1797718,
     "longitude": 4.4708131
   },
@@ -901,7 +977,8 @@
     "postcode": "2514 AJ",
     "plaats": "'S-GRAVENHAGE",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598759Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679614Z",
+    "bu": "Overig",
     "latitude": 52.0928544,
     "longitude": 4.3091771
   },
@@ -913,7 +990,8 @@
     "postcode": "5611 LB",
     "plaats": "EINDHOVEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598823Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679679Z",
+    "bu": "Overig",
     "latitude": 51.4295804,
     "longitude": 5.4826978
   },
@@ -925,7 +1003,8 @@
     "postcode": "3534 RA",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598882Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679741Z",
+    "bu": "Overig",
     "latitude": 52.0989125,
     "longitude": 5.0848778
   },
@@ -937,7 +1016,8 @@
     "postcode": "6603 JS",
     "plaats": "WIJCHEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598939Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679802Z",
+    "bu": "Overig",
     "latitude": 51.7947967,
     "longitude": 5.7439706
   },
@@ -949,7 +1029,8 @@
     "postcode": "3403 AC",
     "plaats": "IJSSELSTEIN UT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.598997Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679863Z",
+    "bu": "Overig",
     "latitude": 52.0205456,
     "longitude": 5.0264385
   },
@@ -961,7 +1042,8 @@
     "postcode": "3514 ET",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599055Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679924Z",
+    "bu": "Overig",
     "latitude": 52.0984065,
     "longitude": 5.1226709
   },
@@ -973,7 +1055,8 @@
     "postcode": "3817 BW",
     "plaats": "AMERSFOORT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599112Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.679985Z",
+    "bu": "Overig",
     "latitude": 52.150083,
     "longitude": 5.3874468
   },
@@ -985,7 +1068,8 @@
     "postcode": "3544 MN",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599171Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680049Z",
+    "bu": "Overig",
     "latitude": 52.0935589,
     "longitude": 5.0389978
   },
@@ -997,7 +1081,8 @@
     "postcode": "4125 RN",
     "plaats": "HOEF EN HAAG",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599230Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680111Z",
+    "bu": "Overig",
     "latitude": 51.9861495,
     "longitude": 5.1197997
   },
@@ -1009,7 +1094,8 @@
     "postcode": "2801 CJ",
     "plaats": "GOUDA",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599293Z"
+    "toegevoegdOp": "2026-01-04T14:31:19.680178Z",
+    "bu": "Overig"
   },
   {
     "id": "shared-87",
@@ -1019,7 +1105,8 @@
     "postcode": "3941 EE",
     "plaats": "DOORN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599351Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680240Z",
+    "bu": "Overig",
     "latitude": 52.0446757,
     "longitude": 5.3465638
   },
@@ -1031,7 +1118,8 @@
     "postcode": "3545 CL",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599409Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680302Z",
+    "bu": "Overig",
     "latitude": 52.0793342,
     "longitude": 5.0671973
   },
@@ -1043,7 +1131,8 @@
     "postcode": "5642 RK",
     "plaats": "EINDHOVEN",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599467Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680363Z",
+    "bu": "Overig",
     "latitude": 51.4374652,
     "longitude": 5.5218878
   },
@@ -1055,7 +1144,8 @@
     "postcode": "1051 GT",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599526Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680425Z",
+    "bu": "Overig",
     "latitude": 52.3838814,
     "longitude": 4.8724867
   },
@@ -1067,7 +1157,8 @@
     "postcode": "1073 ES",
     "plaats": "AMSTERDAM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599590Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680487Z",
+    "bu": "Overig",
     "latitude": 52.3535832,
     "longitude": 4.9025821
   },
@@ -1079,7 +1170,8 @@
     "postcode": "3262 SN",
     "plaats": "OUD BEIJERLAND",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599649Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680550Z",
+    "bu": "Overig",
     "latitude": 51.8231921,
     "longitude": 4.4156505
   },
@@ -1091,7 +1183,8 @@
     "postcode": "3581 TS",
     "plaats": "UTRECHT",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599712Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680611Z",
+    "bu": "Overig",
     "latitude": 52.0910128,
     "longitude": 5.1367138
   },
@@ -1103,7 +1196,8 @@
     "postcode": "3981 JG",
     "plaats": "BUNNIK",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599770Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680673Z",
+    "bu": "Overig",
     "latitude": 52.0711099,
     "longitude": 5.1877807
   },
@@ -1115,7 +1209,8 @@
     "postcode": "5211 HN",
     "plaats": "'S-HERTOGENBOSCH",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599827Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680735Z",
+    "bu": "Overig",
     "latitude": 51.6874043,
     "longitude": 5.3033586
   },
@@ -1127,7 +1222,8 @@
     "postcode": "1221 KD",
     "plaats": "HILVERSUM",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599884Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680795Z",
+    "bu": "Overig",
     "latitude": 52.2251849,
     "longitude": 5.1844559
   },
@@ -1139,7 +1235,8 @@
     "postcode": "1381 GT",
     "plaats": "WEESP",
     "source": "shared",
-    "toegevoegdOp": "2026-01-04T14:00:03.599941Z",
+    "toegevoegdOp": "2026-01-04T14:31:19.680856Z",
+    "bu": "Overig",
     "latitude": 52.2982549,
     "longitude": 5.0583788
   }
