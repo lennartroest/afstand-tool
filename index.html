@@ -457,6 +457,26 @@
                 </div>
                 <button class="btn btn-primary" onclick="addNewAddress()">Adres Toevoegen</button>
                 <div id="addressMessage"></div>
+                
+                <!-- Cache Beheer Sectie -->
+                <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">💾 Cache Beheer</h3>
+                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                        De cache slaat gegeocodeerde adressen op om sneller te laden. Als de cache te vol raakt, kunnen adressen verloren gaan.
+                    </p>
+                    <div id="cacheStats" style="margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">
+                        <span id="cacheStatsText">Cache wordt geladen...</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="refreshCacheStats()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            🔄 Ververs Statistieken
+                        </button>
+                        <button class="btn btn-danger" onclick="clearCacheWithConfirm()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            🗑️ Cache Wissen
+                        </button>
+                    </div>
+                    <div id="cacheMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                </div>
             </div>
 
             <!-- Opgeslagen Adressen Card -->
@@ -1253,8 +1273,10 @@
         /**
          * Geocode cache systeem
          * Slaat gegeocodeerde coördinaten op in localStorage om herhaalde geocoding te voorkomen
+         * Met automatische opschoning en error handling voor quota overschrijding
          */
         const GEOCODE_CACHE_KEY = 'geocodeCache';
+        const MAX_CACHE_SIZE = 500; // Maximum aantal cache entries (voorkomt quota overschrijding)
         
         /**
          * Genereer een cache key op basis van het adres
@@ -1271,36 +1293,143 @@
         }
         
         /**
+         * Verwijder oude cache entries als de cache te groot wordt (LRU - Least Recently Used)
+         */
+        function cleanupCache(cache) {
+            const entries = Object.keys(cache);
+            
+            if (entries.length > MAX_CACHE_SIZE) {
+                // Sorteer entries op cachedAt (oudste eerst)
+                const sortedEntries = entries
+                    .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                    .sort((a, b) => a.cachedAt - b.cachedAt);
+                
+                // Verwijder de oudste 20% van de entries
+                const toRemove = Math.floor(entries.length * 0.2);
+                for (let i = 0; i < toRemove; i++) {
+                    delete cache[sortedEntries[i].key];
+                }
+                
+                console.log(`🧹 Cache opgeschoond: ${toRemove} oude entries verwijderd`);
+            }
+        }
+        
+        /**
          * Haal gegeocodeerde coördinaten op uit de cache
          */
         function getCachedGeocode(address) {
             try {
-                const cache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}');
+                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                if (!cacheStr) return null;
+                
+                const cache = JSON.parse(cacheStr);
                 const cacheKey = getGeocodeCacheKey(address);
                 const cached = cache[cacheKey];
                 
                 if (cached && cached.lat && cached.lon) {
+                    // Update cachedAt voor LRU tracking
+                    cached.cachedAt = Date.now();
+                    // Probeer de update op te slaan (maar faal niet als het niet lukt)
+                    try {
+                        cache[cacheKey] = cached;
+                        localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                    } catch (e) {
+                        // Negeer fouten bij het updaten van de timestamp
+                    }
+                    
                     console.log(`📍 Cache hit voor adres: ${addressManager.getFullAddressString(address)}`);
                     return { lat: cached.lat, lon: cached.lon };
                 }
             } catch (error) {
                 console.error('Fout bij lezen van geocode cache:', error);
+                // Als de cache corrupt is, probeer deze te repareren
+                try {
+                    localStorage.removeItem(GEOCODE_CACHE_KEY);
+                    console.log('🔧 Corrupte cache verwijderd');
+                } catch (e) {
+                    console.error('Kon corrupte cache niet verwijderen:', e);
+                }
             }
             return null;
         }
         
         /**
          * Sla gegeocodeerde coördinaten op in de cache
+         * Met error handling voor quota overschrijding en automatische opschoning
          */
         function setCachedGeocode(address, lat, lon) {
             try {
-                const cache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}');
+                let cache = {};
+                try {
+                    const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                    if (cacheStr) {
+                        cache = JSON.parse(cacheStr);
+                    }
+                } catch (e) {
+                    console.warn('Cache kon niet worden gelezen, start met lege cache:', e);
+                    cache = {};
+                }
+                
                 const cacheKey = getGeocodeCacheKey(address);
-                cache[cacheKey] = { lat, lon, cachedAt: new Date().toISOString() };
-                localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
-                console.log(`💾 Coördinaten opgeslagen in cache voor: ${addressManager.getFullAddressString(address)}`);
+                
+                // Compressie: sla alleen essentiële data op (lat, lon, timestamp voor LRU)
+                cache[cacheKey] = { 
+                    lat: lat, 
+                    lon: lon, 
+                    cachedAt: Date.now() // Gebruik timestamp voor LRU cleanup
+                };
+                
+                // Cleanup oude entries voordat we opslaan
+                cleanupCache(cache);
+                
+                // Probeer op te slaan met error handling
+                const cacheStr = JSON.stringify(cache);
+                localStorage.setItem(GEOCODE_CACHE_KEY, cacheStr);
+                
+                console.log(`💾 Coördinaten opgeslagen in cache voor: ${addressManager.getFullAddressString(address)} (${Object.keys(cache).length} entries)`);
+                return true;
             } catch (error) {
-                console.error('Fout bij opslaan van geocode cache:', error);
+                // Check of het een quota overschrijding is
+                if (error.name === 'QuotaExceededError' || error.code === 22) {
+                    console.warn('⚠️ localStorage quota overschreden, probeer cache op te schonen...');
+                    
+                    try {
+                        // Probeer cache te verkleinen door 50% van de entries te verwijderen
+                        const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                        if (cacheStr) {
+                            const cache = JSON.parse(cacheStr);
+                            const entries = Object.keys(cache);
+                            
+                            // Verwijder de helft van de oudste entries
+                            const sortedEntries = entries
+                                .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                                .sort((a, b) => a.cachedAt - b.cachedAt);
+                            
+                            const toRemove = Math.floor(entries.length / 2);
+                            for (let i = 0; i < toRemove; i++) {
+                                delete cache[sortedEntries[i].key];
+                            }
+                            
+                            // Probeer opnieuw op te slaan
+                            localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                            console.log(`🧹 Cache verkleind: ${toRemove} entries verwijderd, probeer opnieuw...`);
+                            
+                            // Probeer het nieuwe adres opnieuw op te slaan
+                            const cacheKey = getGeocodeCacheKey(address);
+                            cache[cacheKey] = { lat: lat, lon: lon, cachedAt: Date.now() };
+                            localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                            console.log(`✅ Coördinaten opgeslagen na cleanup`);
+                            return true;
+                        }
+                    } catch (retryError) {
+                        console.error('❌ Cache cleanup gefaald:', retryError);
+                        // Als zelfs cleanup niet werkt, log een waarschuwing
+                        console.warn('⚠️ Kon cache niet opslaan. Cache is mogelijk vol. Overweeg handmatige cleanup.');
+                    }
+                } else {
+                    console.error('Fout bij opslaan van geocode cache:', error);
+                }
+                return false;
             }
         }
         
@@ -1308,8 +1437,74 @@
          * Wis de geocode cache (optioneel, voor debugging)
          */
         function clearGeocodeCache() {
-            localStorage.removeItem(GEOCODE_CACHE_KEY);
-            console.log('🗑️ Geocode cache gewist');
+            try {
+                localStorage.removeItem(GEOCODE_CACHE_KEY);
+                console.log('🗑️ Geocode cache gewist');
+            } catch (error) {
+                console.error('Fout bij wissen van cache:', error);
+            }
+        }
+        
+        /**
+         * Toon cache statistieken (voor debugging)
+         */
+        function getCacheStats() {
+            try {
+                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                if (!cacheStr) {
+                    return { size: 0, entries: 0, sizeKB: '0.00', maxSize: MAX_CACHE_SIZE };
+                }
+                
+                const cache = JSON.parse(cacheStr);
+                const entries = Object.keys(cache);
+                const sizeInBytes = new Blob([cacheStr]).size;
+                
+                return {
+                    entries: entries.length,
+                    size: sizeInBytes,
+                    sizeKB: (sizeInBytes / 1024).toFixed(2),
+                    maxSize: MAX_CACHE_SIZE,
+                    percentage: ((entries.length / MAX_CACHE_SIZE) * 100).toFixed(1)
+                };
+            } catch (error) {
+                console.error('Fout bij ophalen cache stats:', error);
+                return { size: 0, entries: 0, sizeKB: '0.00', maxSize: MAX_CACHE_SIZE, percentage: '0.0' };
+            }
+        }
+        
+        /**
+         * Ververs cache statistieken in de UI
+         */
+        function refreshCacheStats() {
+            const stats = getCacheStats();
+            const statsText = document.getElementById('cacheStatsText');
+            
+            if (stats.entries === 0) {
+                statsText.innerHTML = 'Geen cache entries';
+            } else {
+                const percentage = stats.percentage;
+                const color = percentage > 80 ? '#dc3545' : percentage > 60 ? '#ff9800' : 'var(--dark-teal)';
+                statsText.innerHTML = `
+                    <strong>${stats.entries}</strong> entries in cache (${stats.sizeKB} KB) 
+                    <span style="color: ${color};">(${percentage}% van maximum ${stats.maxSize})</span>
+                `;
+            }
+            
+            showMessage('cacheMessage', 'Statistieken ververst', 'success');
+            setTimeout(() => {
+                document.getElementById('cacheMessage').innerHTML = '';
+            }, 2000);
+        }
+        
+        /**
+         * Wis cache met bevestiging
+         */
+        function clearCacheWithConfirm() {
+            if (confirm('Weet je zeker dat je de cache wilt wissen? Alle opgeslagen geocode data wordt verwijderd en moet opnieuw worden opgehaald.')) {
+                clearGeocodeCache();
+                refreshCacheStats();
+                showMessage('cacheMessage', '✅ Cache gewist! Adressen worden bij volgende keer opnieuw gegeocodeerd.', 'success');
+            }
         }
 
         /**
@@ -1604,8 +1799,29 @@
 
         // Initialiseer bij laden
         window.onload = async () => {
+            // Toon cache statistieken bij start
+            const cacheStats = getCacheStats();
+            console.log(`📊 Cache statistieken bij start:`, cacheStats);
+            if (cacheStats.entries > 0) {
+                console.log(`   - ${cacheStats.entries} entries in cache (${cacheStats.sizeKB} KB)`);
+                console.log(`   - Maximum cache grootte: ${cacheStats.maxSize} entries`);
+            }
+            
+            // Update cache statistieken in UI
+            refreshCacheStats();
+            
             // Laad eerst gedeelde adressen
             await loadSharedAddresses();
+            
+            // Toon cache statistieken na laden
+            const cacheStatsAfter = getCacheStats();
+            console.log(`📊 Cache statistieken na laden:`, cacheStatsAfter);
+            if (cacheStatsAfter.entries > 0) {
+                console.log(`   - ${cacheStatsAfter.entries} entries in cache (${cacheStatsAfter.sizeKB} KB)`);
+            }
+            
+            // Update cache statistieken opnieuw na laden
+            refreshCacheStats();
             
             updateSavedAddressesList();
             updateMap();
