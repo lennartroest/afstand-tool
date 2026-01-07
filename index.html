@@ -2,11 +2,1912 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=Github%20bestanden/index.html">
-    <title>Doorverwijzen...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoe ver wonen collega's van klanten - Nederland</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
+    <style>
+        :root {
+            --dark-teal: #2C5F6B;
+            --medium-teal: #3A6B7A;
+            --light-turquoise: #4ECDC4;
+            --bright-turquoise: #5FB3B3;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --gray: #666;
+            --dark-gray: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .logo {
+            height: 180px;
+            width: auto;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            color: var(--dark-teal);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .header p {
+            color: var(--gray);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: var(--dark-teal);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light-turquoise);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--light-turquoise);
+        }
+
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--light-turquoise);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 95, 107, 0.4);
+            background: linear-gradient(135deg, var(--medium-teal) 0%, var(--dark-teal) 100%);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-gray);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: 600px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .address-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .address-item {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+
+        .address-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 5px;
+        }
+
+        .address-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .address-item-address {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .address-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .distance-table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .distance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .distance-table th {
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--medium-teal) 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .distance-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .distance-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .distance-table tr.closest {
+            background: rgba(78, 205, 196, 0.15);
+            font-weight: 600;
+        }
+
+        .distance-value {
+            font-weight: 600;
+            color: var(--dark-teal);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .map-container {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 <body>
-    <p>Je wordt doorverwezen naar de <a href="Github%20bestanden/index.html">Adres Afstand Tool</a>...</p>
+    <div class="container">
+        <div class="header">
+            <img src="logo.png" alt="Consult Zorg Logo" class="logo" onerror="this.style.display='none'">
+            <div class="header-content">
+                <h1>🗺️ Hoe ver wonen collega's van klanten</h1>
+                <p>voer een klant en adres in, en voilá</p>
+                <div id="sharedAddressesStatus" style="display: none; margin-top: 10px; font-size: 0.85rem; color: var(--gray);"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Nieuw Adres Formulier -->
+            <div class="card search-section">
+                <h2>🔍 Nieuw Adres Opzoeken</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end;">
+                    <div class="form-group">
+                        <label for="searchAddressName">Naam/Label:</label>
+                        <input type="text" id="searchAddressName" placeholder="Bijv: Mijn Locatie">
+                    </div>
+                    <div class="form-group">
+                        <label for="searchAddress">Adres:</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="searchAddress" placeholder="Straat, postcode, plaats" autocomplete="off">
+                            <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="searchNewAddress()">Zoek Adres</button>
+                </div>
+                <div id="searchMessage"></div>
+            </div>
+
+            <!-- BU Filter Sectie -->
+            <div class="card" id="buFilterCard" style="display: none;">
+                <h2>🏢 Filter op Business Unit (BU)</h2>
+                <div id="buFilterButtons" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <!-- BU filter knoppen worden hier dynamisch toegevoegd -->
+                </div>
+            </div>
+
+            <!-- Kaart Container -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <!-- Afstand Tabel -->
+            <div class="distance-table-container">
+                <h2>📊 Afstanden</h2>
+                <div id="distanceTableContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Voer een nieuw adres in om afstanden te zien</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adresbeheer Card -->
+            <div class="card" style="display: none;">
+                <h2>📍 Adresbeheer</h2>
+                
+                <!-- Gedeelde Adressen Configuratie -->
+                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">🔗 Gedeelde Adressenlijst</h3>
+                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                        Stel handmatig de GitHub URL in als automatische detectie niet werkt:
+                    </p>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="manualSharedUrl" placeholder="https://raw.githubusercontent.com/gebruikersnaam/repo/main/adressen.json" style="font-size: 0.9rem;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="setManualSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            URL Opslaan
+                        </button>
+                        <button class="btn btn-secondary" onclick="testSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            Test URL
+                        </button>
+                    </div>
+                    <div id="manualUrlMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                </div>
+                
+                <!-- Excel Upload Sectie -->
+                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">📁 Excel Bestand Uploaden</h3>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
+                        Upload een Excel bestand met kolommen: <strong>Naam/Label</strong>, <strong>Volledig Adres</strong> en optioneel <strong>BU</strong> (Business Unit)
+                    </p>
+                    <div class="form-group">
+                        <label for="excelFile">Selecteer Excel bestand (.xlsx of .xls):</label>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 8px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadExcelFile()" id="uploadBtn">
+                        📤 Upload en Importeer Adressen
+                    </button>
+                    <div id="excelUploadMessage"></div>
+                    <div id="excelProgress" style="margin-top: 15px; display: none;">
+                        <div style="background: #e0e0e0; border-radius: 8px; height: 20px; overflow: hidden;">
+                            <div id="excelProgressBar" style="background: var(--light-turquoise); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                        <p id="excelProgressText" style="margin-top: 5px; color: var(--gray); font-size: 0.9rem;"></p>
+                    </div>
+                </div>
+
+                <!-- Handmatig Adres Toevoegen -->
+                <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">✏️ Handmatig Adres Toevoegen</h3>
+                <div class="form-group">
+                    <label for="addressName">Naam/Label:</label>
+                    <input type="text" id="addressName" placeholder="Bijv: Kantoor Amsterdam">
+                </div>
+                <div class="form-group">
+                    <label for="addressFull">Volledig Adres:</label>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="addressFull" placeholder="Straat, huisnummer, postcode, plaats" autocomplete="off">
+                        <div id="autocompleteDropdownAdd" class="autocomplete-dropdown"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addNewAddress()">Adres Toevoegen</button>
+                <div id="addressMessage"></div>
+                
+                <!-- Cache Beheer Sectie -->
+                <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">💾 Cache Beheer</h3>
+                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                        De cache slaat gegeocodeerde adressen op om sneller te laden. Als de cache te vol raakt, kunnen adressen verloren gaan.
+                    </p>
+                    <div id="cacheStats" style="margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">
+                        <span id="cacheStatsText">Cache wordt geladen...</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="refreshCacheStats()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            🔄 Ververs Statistieken
+                        </button>
+                        <button class="btn btn-danger" onclick="clearCacheWithConfirm()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                            🗑️ Cache Wissen
+                        </button>
+                    </div>
+                    <div id="cacheMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                </div>
+            </div>
+
+            <!-- Opgeslagen Adressen Card -->
+            <div class="card" style="display: none;">
+                <h2>💾 Opgeslagen Adressen</h2>
+                <div id="savedAddressesList" class="address-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📍</div>
+                        <p>Nog geen adressen opgeslagen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- SheetJS voor Excel parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Adresbeheer Module -->
+    <script src="addressManager.js"></script>
+    
+    <script>
+        // Initialiseer adresbeheer
+        const addressManager = new AddressManager();
+        
+        // Helper functie voor veilige aanroep van getDisplayAddressString met fallback
+        function getDisplayAddress(address) {
+            if (addressManager.getDisplayAddressString && typeof addressManager.getDisplayAddressString === 'function') {
+                return addressManager.getDisplayAddressString(address);
+            }
+            // Fallback: gebruik alleen postcode + plaats als functie niet beschikbaar is
+            const parts = [];
+            if (address.postcode) parts.push(address.postcode);
+            if (address.plaats) parts.push(address.plaats);
+            return parts.join(' ') || addressManager.getFullAddressString(address);
+        }
+        
+        // Initialiseer kaart (centrum van Nederland)
+        const map = L.map('map').setView([52.1326, 5.2913], 7);
+        
+        // Voeg kaartlaag toe
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        let savedMarkers = [];
+        let searchMarker = null;
+        let closestMarker = null;
+        let distanceLines = [];
+        let autocompleteTimeout = null;
+        let currentAutocompleteDropdown = null;
+        let selectedBU = null; // Geselecteerde Business Unit filter
+        let lastSearchResult = null; // Laatste zoekresultaat voor herberekening bij BU filter
+
+        /**
+         * Zoek adres suggesties voor autocomplete
+         */
+        async function searchAddressSuggestions(query) {
+            if (query.length < 3) {
+                return [];
+            }
+
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Nederland')}&limit=5&addressdetails=1`,
+                    {
+                        headers: {
+                            'User-Agent': 'HoeVerWonenCollegasVanKlanten/1.0'
+                        }
+                    }
+                );
+                const data = await response.json();
+                return data || [];
+            } catch (error) {
+                console.error('Autocomplete fout:', error);
+                return [];
+            }
+        }
+
+        /**
+         * Toon autocomplete dropdown
+         */
+        function showAutocomplete(suggestions, inputId, dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            if (!suggestions || suggestions.length === 0) {
+                dropdown.classList.remove('show');
+                return;
+            }
+
+            let html = '';
+            suggestions.forEach(suggestion => {
+                const displayName = suggestion.display_name.split(', Nederland')[0];
+                html += `
+                    <div class="autocomplete-item" onclick="selectAutocomplete('${displayName.replace(/'/g, "\\'")}', '${inputId}')">
+                        ${displayName}
+                    </div>
+                `;
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+            currentAutocompleteDropdown = dropdownId;
+        }
+
+        /**
+         * Selecteer een autocomplete suggestie
+         */
+        function selectAutocomplete(value, inputId) {
+            document.getElementById(inputId).value = value;
+            document.getElementById(currentAutocompleteDropdown === 'autocompleteDropdown' ? 'autocompleteDropdown' : 'autocompleteDropdownAdd').classList.remove('show');
+            currentAutocompleteDropdown = null;
+        }
+
+        /**
+         * Setup autocomplete voor een input veld
+         */
+        function setupAutocomplete(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+
+            input.addEventListener('input', async (e) => {
+                const query = e.target.value.trim();
+                
+                if (autocompleteTimeout) {
+                    clearTimeout(autocompleteTimeout);
+                }
+
+                if (query.length < 3) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+
+                autocompleteTimeout = setTimeout(async () => {
+                    const suggestions = await searchAddressSuggestions(query);
+                    showAutocomplete(suggestions, inputId, dropdownId);
+                }, 300);
+            });
+
+            // Sluit dropdown bij klik buiten
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        /**
+         * Bereken afstand tussen twee coördinaten (Haversine formule)
+         */
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Straal van de aarde in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        /**
+         * Geocode een adres naar coördinaten
+         */
+        async function geocodeAddress(addressString) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressString + ', Nederland')}&limit=1`,
+                    {
+                        headers: {
+                            'User-Agent': 'HoeVerWonenCollegasVanKlanten/1.0'
+                        }
+                    }
+                );
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    return {
+                        lat: parseFloat(data[0].lat),
+                        lon: parseFloat(data[0].lon),
+                        displayName: data[0].display_name
+                    };
+                }
+                return null;
+            } catch (error) {
+                console.error('Geocoding fout:', error);
+                return null;
+            }
+        }
+
+        /**
+         * Maak een marker icoon
+         */
+        function createMarkerIcon(color = '#2C5F6B', isClosest = false) {
+            const size = isClosest ? 20 : 15;
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    width: ${size}px;
+                    height: ${size}px;
+                    background-color: ${color};
+                    border: 3px solid white;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    ${isClosest ? 'animation: pulse 2s infinite;' : ''}
+                "></div>`,
+                iconSize: [size, size],
+                iconAnchor: [size / 2, size / 2]
+            });
+        }
+
+        /**
+         * Update de kaart met opgeslagen adressen
+         */
+        function updateMap() {
+            // Verwijder oude markers
+            savedMarkers.forEach(marker => map.removeLayer(marker));
+            savedMarkers = [];
+
+            let addresses = addressManager.getAllAddresses();
+            
+            // Filter op BU als er een geselecteerd is
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
+            
+            addresses.forEach(address => {
+                if (address.latitude && address.longitude) {
+                    // Gebruik een andere kleur voor gedeelde adressen
+                    const isShared = address.source === 'shared';
+                    const markerColor = isShared ? '#4ECDC4' : '#2C5F6B';
+                    const sharedBadge = isShared ? '<br><span style="background: #4ECDC4; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">🌐 Gedeeld</span>' : '';
+                    const buBadge = address.bu ? `<br><span style="background: var(--medium-teal); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">BU: ${address.bu}</span>` : '';
+                    
+                    const marker = L.marker([address.latitude, address.longitude], {
+                        icon: createMarkerIcon(markerColor)
+                    }).addTo(map);
+                    
+                    marker.bindPopup(`
+                        <strong>${address.naam || 'Geen naam'}</strong>${sharedBadge}${buBadge}<br>
+                        ${getDisplayAddress(address)}
+                    `);
+                    
+                    savedMarkers.push(marker);
+                }
+            });
+
+            // Pas zoom aan als er markers zijn
+            if (savedMarkers.length > 0) {
+                const group = new L.featureGroup(savedMarkers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        /**
+         * Parse adres string naar componenten
+         */
+        function parseAddressString(addressString) {
+            // Probeer adres te parsen (eenvoudige versie)
+            // Format: "Straat Huisnummer, Postcode Plaats" of variaties
+            const parts = addressString.split(',').map(p => p.trim());
+            
+            let straat = '';
+            let huisnummer = '';
+            let postcode = '';
+            let plaats = '';
+
+            if (parts.length >= 2) {
+                // Er is een komma, dus waarschijnlijk "Straat Huisnummer, Postcode Plaats"
+                const streetPart = parts[0];
+                const postcodeCityPart = parts[1];
+
+                // Parse straat en huisnummer
+                const streetMatch = streetPart.match(/^(.+?)\s+(\d+[a-zA-Z]?)$/);
+                if (streetMatch) {
+                    straat = streetMatch[1].trim();
+                    huisnummer = streetMatch[2].trim();
+                } else {
+                    straat = streetPart;
+                }
+
+                // Parse postcode en plaats
+                const postcodeMatch = postcodeCityPart.match(/^(\d{4}\s?[A-Z]{2})\s+(.+)$/);
+                if (postcodeMatch) {
+                    postcode = postcodeMatch[1].trim();
+                    plaats = postcodeMatch[2].trim();
+                } else {
+                    plaats = postcodeCityPart;
+                }
+            } else {
+                // Geen komma, probeer alles te parsen
+                const postcodeMatch = addressString.match(/(\d{4}\s?[A-Z]{2})/);
+                if (postcodeMatch) {
+                    postcode = postcodeMatch[1].trim();
+                    const beforePostcode = addressString.substring(0, postcodeMatch.index).trim();
+                    const afterPostcode = addressString.substring(postcodeMatch.index + postcodeMatch[0].length).trim();
+                    
+                    const streetMatch = beforePostcode.match(/^(.+?)\s+(\d+[a-zA-Z]?)$/);
+                    if (streetMatch) {
+                        straat = streetMatch[1].trim();
+                        huisnummer = streetMatch[2].trim();
+                    } else {
+                        straat = beforePostcode;
+                    }
+                    
+                    plaats = afterPostcode;
+                } else {
+                    straat = addressString;
+                }
+            }
+
+            return { straat, huisnummer, postcode, plaats };
+        }
+
+        /**
+         * Voeg een nieuw adres toe
+         */
+        async function addNewAddress() {
+            const naam = document.getElementById('addressName').value.trim();
+            const fullAddressInput = document.getElementById('addressFull').value.trim();
+
+            if (!fullAddressInput) {
+                showMessage('addressMessage', 'Vul een adres in', 'error');
+                return;
+            }
+
+            const { straat, huisnummer, postcode, plaats } = parseAddressString(fullAddressInput);
+            
+            // Maak een tijdelijk adres object voor cache lookup
+            const tempAddress = { straat, huisnummer, postcode, plaats };
+            
+            // Check eerst cache
+            let geocodeResult = getCachedGeocode(tempAddress);
+            
+            if (!geocodeResult) {
+                showMessage('addressMessage', 'Adres wordt gegeocodeerd...', 'loading');
+                geocodeResult = await geocodeAddress(fullAddressInput);
+                
+                if (!geocodeResult) {
+                    showMessage('addressMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
+                    return;
+                }
+                
+                // Sla op in cache voor volgende keer
+                setCachedGeocode(tempAddress, geocodeResult.lat, geocodeResult.lon);
+            } else {
+                showMessage('addressMessage', 'Adres gevonden in cache...', 'loading');
+            }
+
+            const newAddress = addressManager.addAddress({
+                naam,
+                straat,
+                huisnummer,
+                postcode,
+                plaats,
+                latitude: geocodeResult.lat,
+                longitude: geocodeResult.lon
+            });
+
+            // Reset formulier
+            document.getElementById('addressName').value = '';
+            document.getElementById('addressFull').value = '';
+
+            showMessage('addressMessage', 'Adres succesvol toegevoegd!', 'success');
+            updateSavedAddressesList();
+            updateBUFilter();
+            updateMap();
+        }
+
+        /**
+         * Zoek een nieuw adres en bereken afstanden
+         */
+        async function searchNewAddress() {
+            const addressString = document.getElementById('searchAddress').value.trim();
+            const naam = document.getElementById('searchAddressName').value.trim() || 'Nieuw Adres';
+
+            if (!addressString) {
+                showMessage('searchMessage', 'Voer een adres in', 'error');
+                return;
+            }
+
+            showMessage('searchMessage', 'Adres wordt opgezocht...', 'loading');
+
+            const geocodeResult = await geocodeAddress(addressString);
+            
+            if (!geocodeResult) {
+                showMessage('searchMessage', 'Kon adres niet vinden. Controleer het adres.', 'error');
+                return;
+            }
+
+            // Verwijder oude search marker en lijnen
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+            distanceLines.forEach(line => map.removeLayer(line));
+            distanceLines = [];
+
+            // Reset closest marker styling
+            if (closestMarker) {
+                closestMarker.setIcon(createMarkerIcon('#2C5F6B'));
+            }
+
+            // Voeg nieuwe search marker toe
+            searchMarker = L.marker([geocodeResult.lat, geocodeResult.lon], {
+                icon: createMarkerIcon('#dc3545')
+            }).addTo(map);
+            
+            searchMarker.bindPopup(`
+                <strong>${naam}</strong><br>
+                ${geocodeResult.displayName}
+            `);
+            
+            // Sla zoekresultaat op voor herberekening bij BU filter wijziging
+            lastSearchResult = {
+                naam: naam,
+                lat: geocodeResult.lat,
+                lon: geocodeResult.lon,
+                displayName: geocodeResult.displayName
+            };
+
+            // Bereken afstanden (filter op BU als nodig)
+            let addresses = addressManager.getAllAddresses();
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
+            const distances = [];
+
+            addresses.forEach(address => {
+                if (address.latitude && address.longitude) {
+                    const distance = calculateDistance(
+                        geocodeResult.lat,
+                        geocodeResult.lon,
+                        address.latitude,
+                        address.longitude
+                    );
+                    
+                    distances.push({
+                        address,
+                        distance
+                    });
+                }
+            });
+
+            // Sorteer op afstand
+            distances.sort((a, b) => a.distance - b.distance);
+
+            // Vind dichtstbijzijnde marker en highlight deze
+            if (distances.length > 0) {
+                const closest = distances[0];
+                closestMarker = savedMarkers.find(marker => {
+                    const lat = marker.getLatLng().lat;
+                    const lon = marker.getLatLng().lng;
+                    return Math.abs(lat - closest.address.latitude) < 0.0001 &&
+                           Math.abs(lon - closest.address.longitude) < 0.0001;
+                });
+
+                if (closestMarker) {
+                    closestMarker.setIcon(createMarkerIcon('#4ECDC4', true));
+                    
+                    // Teken lijn naar dichtstbijzijnde
+                    const line = L.polyline([
+                        [geocodeResult.lat, geocodeResult.lon],
+                        [closest.address.latitude, closest.address.longitude]
+                    ], {
+                        color: '#4ECDC4',
+                        weight: 3,
+                        opacity: 0.7,
+                        dashArray: '10, 5'
+                    }).addTo(map);
+                    
+                    distanceLines.push(line);
+                }
+            }
+
+            // Update tabel
+            updateDistanceTable(distances, naam);
+
+            // Pas zoom aan
+            const bounds = L.latLngBounds([
+                [geocodeResult.lat, geocodeResult.lon],
+                ...savedMarkers.map(m => m.getLatLng())
+            ]);
+            map.fitBounds(bounds.pad(0.1));
+
+            showMessage('searchMessage', 'Adres gevonden! Afstanden berekend.', 'success');
+        }
+
+        /**
+         * Update de afstand tabel
+         */
+        function updateDistanceTable(distances, searchName) {
+            const container = document.getElementById('distanceTableContainer');
+            
+            if (distances.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Geen opgeslagen adressen om afstanden te berekenen</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <p style="margin-bottom: 10px; color: #666;">
+                    Afstanden vanaf: <strong>${searchName}</strong>
+                </p>
+                <table class="distance-table">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th>Adres</th>
+                            <th>Afstand</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            distances.forEach((item, index) => {
+                const isClosest = index === 0;
+                html += `
+                    <tr class="${isClosest ? 'closest' : ''}">
+                        <td>${item.address.naam || 'Geen naam'}</td>
+                        <td>${getDisplayAddress(item.address)}</td>
+                        <td class="distance-value">${item.distance.toFixed(2)} km</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Update de BU filter knoppen
+         */
+        function updateBUFilter() {
+            const bus = addressManager.getAllBUs();
+            const filterCard = document.getElementById('buFilterCard');
+            const filterButtons = document.getElementById('buFilterButtons');
+            
+            console.log('🏢 updateBUFilter aangeroepen:', { 
+                aantalBUs: bus.length, 
+                bus: bus,
+                totaalAdressen: addressManager.getAllAddresses().length 
+            });
+            
+            // Toon altijd de filter card
+            filterCard.style.display = 'block';
+            
+            if (bus.length === 0) {
+                // Geen BU's gevonden - toon melding
+                filterButtons.innerHTML = `
+                    <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">
+                        💡 Geen Business Units gevonden. Upload een Excel bestand met een BU kolom of voeg handmatig adressen met BU's toe.
+                    </p>
+                `;
+                console.log('⚠️ Geen BU\'s gevonden in adressen');
+                return;
+            }
+            
+            // Er zijn BU's - toon filter knoppen
+            let html = '<button class="btn btn-secondary" onclick="filterByBU(null)" style="width: auto; padding: 8px 16px; font-size: 0.9rem;' + (selectedBU === null ? ' background: var(--dark-teal); color: white;' : '') + '">Alle BU\'s</button>';
+            
+            bus.forEach(bu => {
+                const isActive = selectedBU === bu;
+                html += `<button class="btn btn-secondary" onclick="filterByBU('${bu.replace(/'/g, "\\'")}')" style="width: auto; padding: 8px 16px; font-size: 0.9rem;${isActive ? ' background: var(--dark-teal); color: white;' : ''}">${bu}</button>`;
+            });
+            
+            filterButtons.innerHTML = html;
+            console.log(`✅ ${bus.length} BU filter knoppen getoond`);
+        }
+
+        /**
+         * Filter adressen op BU
+         */
+        function filterByBU(bu) {
+            selectedBU = bu;
+            updateBUFilter();
+            updateMap();
+            updateSavedAddressesList();
+            
+            // Herbereken afstanden als er al een zoekresultaat is
+            if (lastSearchResult) {
+                recalculateDistances();
+            }
+        }
+        
+        /**
+         * Herbereken afstanden na BU filter wijziging
+         */
+        function recalculateDistances() {
+            if (!lastSearchResult) return;
+            
+            // Verwijder oude afstandslijnen
+            distanceLines.forEach(line => map.removeLayer(line));
+            distanceLines = [];
+            
+            // Reset closest marker styling
+            if (closestMarker) {
+                closestMarker.setIcon(createMarkerIcon('#2C5F6B'));
+            }
+            
+            // Bereken afstanden (filter op BU als nodig)
+            let addresses = addressManager.getAllAddresses();
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
+            const distances = [];
+
+            addresses.forEach(address => {
+                if (address.latitude && address.longitude) {
+                    const distance = calculateDistance(
+                        lastSearchResult.lat,
+                        lastSearchResult.lon,
+                        address.latitude,
+                        address.longitude
+                    );
+                    
+                    distances.push({
+                        address,
+                        distance
+                    });
+                }
+            });
+
+            // Sorteer op afstand
+            distances.sort((a, b) => a.distance - b.distance);
+
+            // Vind dichtstbijzijnde marker en highlight deze
+            if (distances.length > 0) {
+                const closest = distances[0];
+                closestMarker = savedMarkers.find(marker => {
+                    const lat = marker.getLatLng().lat;
+                    const lon = marker.getLatLng().lng;
+                    return Math.abs(lat - closest.address.latitude) < 0.0001 &&
+                           Math.abs(lon - closest.address.longitude) < 0.0001;
+                });
+
+                if (closestMarker) {
+                    closestMarker.setIcon(createMarkerIcon('#4ECDC4', true));
+                    
+                    // Teken lijn naar dichtstbijzijnde
+                    const line = L.polyline([
+                        [lastSearchResult.lat, lastSearchResult.lon],
+                        [closest.address.latitude, closest.address.longitude]
+                    ], {
+                        color: '#4ECDC4',
+                        weight: 3,
+                        opacity: 0.7,
+                        dashArray: '10, 5'
+                    }).addTo(map);
+                    
+                    distanceLines.push(line);
+                }
+            }
+
+            // Update tabel
+            updateDistanceTable(distances, lastSearchResult.naam);
+        }
+
+        /**
+         * Update de lijst met opgeslagen adressen
+         */
+        function updateSavedAddressesList() {
+            const container = document.getElementById('savedAddressesList');
+            let addresses = addressManager.getAllAddresses();
+            
+            // Filter op BU als er een geselecteerd is
+            if (selectedBU !== null) {
+                addresses = addresses.filter(address => address.bu === selectedBU);
+            }
+
+            if (addresses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📍</div>
+                        <p>${selectedBU !== null ? `Geen adressen gevonden voor BU: ${selectedBU}` : 'Nog geen adressen opgeslagen'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            addresses.forEach(address => {
+                const isShared = address.source === 'shared';
+                const badge = isShared ? '<span style="background: var(--light-turquoise); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px;">Gedeeld</span>' : '';
+                const buBadge = address.bu ? `<span style="background: var(--medium-teal); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px;">BU: ${address.bu}</span>` : '';
+                
+                html += `
+                    <div class="address-item" style="${isShared ? 'border-left: 3px solid var(--light-turquoise);' : ''}">
+                        <div class="address-item-header">
+                            <div>
+                                <div class="address-item-name">
+                                    ${address.naam || 'Geen naam'}${badge}${buBadge}
+                                </div>
+                                <div class="address-item-address">${getDisplayAddress(address)}</div>
+                            </div>
+                            <div class="address-item-actions">
+                                ${!isShared ? `<button class="btn btn-danger btn-small" onclick="removeAddress('${address.id}')">Verwijder</button>` : '<span style="color: var(--gray); font-size: 0.85rem;">Alleen lezen</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Verwijder een adres
+         */
+        function removeAddress(id) {
+            // Controleer of het een gedeeld adres is
+            const sharedAddresses = addressManager.getSharedAddresses();
+            const isShared = sharedAddresses.some(addr => addr.id === id);
+            
+            if (isShared) {
+                alert('Dit is een gedeeld adres en kan niet worden verwijderd. Alleen lokale adressen kunnen worden verwijderd.');
+                return;
+            }
+            
+            if (confirm('Weet je zeker dat je dit adres wilt verwijderen?')) {
+                addressManager.removeAddress(id);
+                updateSavedAddressesList();
+                updateBUFilter();
+                updateMap();
+                
+                // Reset search als nodig
+                if (searchMarker) {
+                    map.removeLayer(searchMarker);
+                    searchMarker = null;
+                }
+                lastSearchResult = null; // Reset ook het opgeslagen zoekresultaat
+                distanceLines.forEach(line => map.removeLayer(line));
+                distanceLines = [];
+                document.getElementById('distanceTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Voer een nieuw adres in om afstanden te zien</p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Toon een bericht
+         */
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'loading';
+            element.innerHTML = `<div class="${className}">${message}</div>`;
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    element.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        /**
+         * Upload en importeer Excel bestand
+         */
+        async function uploadExcelFile() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showMessage('excelUploadMessage', 'Selecteer eerst een Excel bestand', 'error');
+                return;
+            }
+
+            // Controleer bestandstype
+            if (!file.name.match(/\.(xlsx|xls)$/i)) {
+                showMessage('excelUploadMessage', 'Alleen .xlsx en .xls bestanden zijn toegestaan', 'error');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Bezig met verwerken...';
+
+            const progressDiv = document.getElementById('excelProgress');
+            const progressBar = document.getElementById('excelProgressBar');
+            const progressText = document.getElementById('excelProgressText');
+
+            try {
+                // Lees het Excel bestand
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // Neem het eerste werkblad
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Converteer naar JSON
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                if (jsonData.length < 2) {
+                    throw new Error('Excel bestand moet minimaal een header rij en één data rij bevatten');
+                }
+
+                // Zoek de kolommen (flexibel: zoek op naam of gebruik eerste twee kolommen)
+                const headers = jsonData[0].map(h => String(h || '').toLowerCase().trim());
+                
+                let naamColIndex = -1;
+                let adresColIndex = -1;
+                let buColIndex = -1;
+
+                // Zoek kolommen op naam
+                headers.forEach((header, index) => {
+                    if (header.includes('naam') || header.includes('label') || header.includes('name')) {
+                        naamColIndex = index;
+                    }
+                    if (header.includes('adres') || header.includes('address') || header.includes('volledig')) {
+                        adresColIndex = index;
+                    }
+                    if (header.includes('bu') || header.includes('business unit') || header.includes('businessunit')) {
+                        buColIndex = index;
+                    }
+                });
+
+                // Als niet gevonden, gebruik eerste kolommen
+                if (naamColIndex === -1) naamColIndex = 0;
+                if (adresColIndex === -1) adresColIndex = 1;
+                // BU kolom is optioneel, blijft -1 als niet gevonden
+
+                // Verzamel adressen
+                const addressesToImport = [];
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    const naam = row[naamColIndex] ? String(row[naamColIndex]).trim() : '';
+                    const adres = row[adresColIndex] ? String(row[adresColIndex]).trim() : '';
+                    const bu = buColIndex !== -1 && row[buColIndex] ? String(row[buColIndex]).trim() : null;
+                    
+                    if (adres) {
+                        addressesToImport.push({ naam, adres, bu });
+                    }
+                }
+
+                if (addressesToImport.length === 0) {
+                    throw new Error('Geen geldige adressen gevonden in het Excel bestand');
+                }
+
+                // Toon progress
+                progressDiv.style.display = 'block';
+                progressText.textContent = `0 van ${addressesToImport.length} adressen verwerkt...`;
+
+                // Verwerk elk adres
+                let successCount = 0;
+                let errorCount = 0;
+                let cachedCount = 0;
+                const errors = [];
+
+                for (let i = 0; i < addressesToImport.length; i++) {
+                    const { naam, adres, bu } = addressesToImport[i];
+                    
+                    // Update progress
+                    const progress = ((i + 1) / addressesToImport.length) * 100;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = `${i + 1} van ${addressesToImport.length} adressen verwerkt... (${naam || adres.substring(0, 30)}...)${cachedCount > 0 ? ` [${cachedCount} uit cache]` : ''}`;
+
+                    try {
+                        const { straat, huisnummer, postcode, plaats } = parseAddressString(adres);
+                        const tempAddress = { straat, huisnummer, postcode, plaats };
+                        
+                        // Check eerst cache
+                        let geocodeResult = getCachedGeocode(tempAddress);
+                        
+                        if (!geocodeResult) {
+                            // Geocode het adres als het niet in cache staat
+                            geocodeResult = await geocodeAddress(adres);
+                            
+                            if (geocodeResult) {
+                                // Sla op in cache voor volgende keer
+                                setCachedGeocode(tempAddress, geocodeResult.lat, geocodeResult.lon);
+                            }
+                            
+                            // Kleine delay om rate limiting te voorkomen (alleen bij nieuwe geocoding)
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        } else {
+                            cachedCount++;
+                        }
+                        
+                        if (geocodeResult) {
+                            addressManager.addAddress({
+                                naam,
+                                straat,
+                                huisnummer,
+                                postcode,
+                                plaats,
+                                latitude: geocodeResult.lat,
+                                longitude: geocodeResult.lon,
+                                bu: bu || null
+                            });
+                            
+                            successCount++;
+                        } else {
+                            errorCount++;
+                            errors.push(`${naam || adres}: Adres niet gevonden`);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        errors.push(`${naam || adres}: ${error.message}`);
+                    }
+                }
+
+                // Update UI
+                updateSavedAddressesList();
+                updateBUFilter();
+                updateMap();
+
+                // Toon resultaten
+                progressBar.style.width = '100%';
+                progressText.textContent = `Klaar! ${successCount} succesvol${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}, ${errorCount} fouten`;
+
+                let resultMessage = `✅ ${successCount} adres(sen) succesvol geïmporteerd${cachedCount > 0 ? ` (${cachedCount} uit cache)` : ''}!`;
+                if (errorCount > 0) {
+                    resultMessage += `<br>⚠️ ${errorCount} adres(sen) konden niet worden geïmporteerd.`;
+                    if (errors.length > 0) {
+                        resultMessage += '<br><details style="margin-top: 10px;"><summary>Bekijk fouten</summary><ul style="margin-top: 5px; padding-left: 20px;">';
+                        errors.forEach(err => {
+                            resultMessage += `<li style="color: #c33; font-size: 0.9rem;">${err}</li>`;
+                        });
+                        resultMessage += '</ul></details>';
+                    }
+                }
+
+                showMessage('excelUploadMessage', resultMessage, errorCount > 0 ? 'error' : 'success');
+
+                // Reset file input
+                fileInput.value = '';
+
+            } catch (error) {
+                console.error('Excel import fout:', error);
+                showMessage('excelUploadMessage', `Fout bij importeren: ${error.message}`, 'error');
+                progressDiv.style.display = 'none';
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '📤 Upload en Importeer Adressen';
+                
+                // Reset progress na 5 seconden
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '';
+                }, 5000);
+            }
+        }
+
+        // CSS voor pulse animatie
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.2); opacity: 0.8; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        /**
+         * Geocode cache systeem
+         * Slaat gegeocodeerde coördinaten op in localStorage om herhaalde geocoding te voorkomen
+         * Met automatische opschoning en error handling voor quota overschrijding
+         */
+        const GEOCODE_CACHE_KEY = 'geocodeCache';
+        const MAX_CACHE_SIZE = 500; // Maximum aantal cache entries (voorkomt quota overschrijding)
+        
+        /**
+         * Genereer een cache key op basis van het adres
+         */
+        function getGeocodeCacheKey(address) {
+            // Gebruik een combinatie van adres componenten voor de cache key
+            const parts = [
+                address.straat || '',
+                address.huisnummer || '',
+                address.postcode || '',
+                address.plaats || ''
+            ].filter(p => p).map(p => p.toLowerCase().trim());
+            return parts.join('|');
+        }
+        
+        /**
+         * Verwijder oude cache entries als de cache te groot wordt (LRU - Least Recently Used)
+         * Controleert zowel op aantal entries als op totale grootte
+         */
+        function cleanupCache(cache) {
+            const entries = Object.keys(cache);
+            const cacheStr = JSON.stringify(cache);
+            const sizeInBytes = new Blob([cacheStr]).size;
+            const sizeInKB = sizeInBytes / 1024;
+            
+            // Schoon op als we te veel entries hebben OF als de cache te groot wordt (>4MB om ruimte te laten)
+            const shouldCleanup = entries.length > MAX_CACHE_SIZE || sizeInKB > 4000;
+            
+            if (shouldCleanup) {
+                // Sorteer entries op cachedAt (oudste eerst)
+                const sortedEntries = entries
+                    .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                    .sort((a, b) => a.cachedAt - b.cachedAt);
+                
+                // Verwijder meer entries als de cache groot is (tot 50% als het echt groot is)
+                let removePercentage = 0.2; // Standaard 20%
+                if (sizeInKB > 4000) {
+                    removePercentage = 0.5; // Verwijder 50% als cache > 4MB
+                } else if (entries.length > MAX_CACHE_SIZE * 1.2) {
+                    removePercentage = 0.3; // Verwijder 30% als we ver over de limiet zitten
+                }
+                
+                const toRemove = Math.max(1, Math.floor(entries.length * removePercentage));
+                
+                for (let i = 0; i < toRemove; i++) {
+                    delete cache[sortedEntries[i].key];
+                }
+                
+                const reason = sizeInKB > 4000 ? `grootte (${sizeInKB.toFixed(1)} KB)` : `aantal (${entries.length} entries)`;
+                console.log(`🧹 Cache opgeschoond: ${toRemove} oude entries verwijderd vanwege ${reason}`);
+            }
+        }
+        
+        /**
+         * Haal gegeocodeerde coördinaten op uit de cache
+         */
+        function getCachedGeocode(address) {
+            try {
+                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                if (!cacheStr) return null;
+                
+                const cache = JSON.parse(cacheStr);
+                const cacheKey = getGeocodeCacheKey(address);
+                const cached = cache[cacheKey];
+                
+                if (cached && cached.lat && cached.lon) {
+                    // Update cachedAt voor LRU tracking
+                    cached.cachedAt = Date.now();
+                    // Probeer de update op te slaan (maar faal niet als het niet lukt)
+                    try {
+                        cache[cacheKey] = cached;
+                        localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                    } catch (e) {
+                        // Negeer fouten bij het updaten van de timestamp
+                    }
+                    
+                    console.log(`📍 Cache hit voor adres: ${addressManager.getFullAddressString(address)}`);
+                    return { lat: cached.lat, lon: cached.lon };
+                }
+            } catch (error) {
+                console.error('Fout bij lezen van geocode cache:', error);
+                // Als de cache corrupt is, probeer deze te repareren
+                try {
+                    localStorage.removeItem(GEOCODE_CACHE_KEY);
+                    console.log('🔧 Corrupte cache verwijderd');
+                } catch (e) {
+                    console.error('Kon corrupte cache niet verwijderen:', e);
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * Sla gegeocodeerde coördinaten op in de cache
+         * Met error handling voor quota overschrijding en automatische opschoning
+         */
+        function setCachedGeocode(address, lat, lon) {
+            try {
+                let cache = {};
+                try {
+                    const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                    if (cacheStr) {
+                        cache = JSON.parse(cacheStr);
+                    }
+                } catch (e) {
+                    console.warn('Cache kon niet worden gelezen, start met lege cache:', e);
+                    cache = {};
+                }
+                
+                // PROACTIEF: Cleanup oude entries VOORDAT we het nieuwe adres toevoegen
+                // Dit voorkomt dat de cache vol raakt tijdens batch-geocoderen
+                cleanupCache(cache);
+                
+                const cacheKey = getGeocodeCacheKey(address);
+                
+                // Compressie: sla alleen essentiële data op (lat, lon, timestamp voor LRU)
+                cache[cacheKey] = { 
+                    lat: lat, 
+                    lon: lon, 
+                    cachedAt: Date.now() // Gebruik timestamp voor LRU cleanup
+                };
+                
+                // Cleanup nogmaals na toevoegen (voor het geval dat)
+                cleanupCache(cache);
+                
+                // Probeer op te slaan met error handling
+                const cacheStr = JSON.stringify(cache);
+                localStorage.setItem(GEOCODE_CACHE_KEY, cacheStr);
+                
+                console.log(`💾 Coördinaten opgeslagen in cache voor: ${addressManager.getFullAddressString(address)} (${Object.keys(cache).length} entries)`);
+                return true;
+            } catch (error) {
+                // Check of het een quota overschrijding is
+                if (error.name === 'QuotaExceededError' || error.code === 22) {
+                    console.warn('⚠️ localStorage quota overschreden, probeer cache op te schonen...');
+                    
+                    try {
+                        // Probeer cache te verkleinen door 50% van de entries te verwijderen
+                        const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                        if (cacheStr) {
+                            const cache = JSON.parse(cacheStr);
+                            const entries = Object.keys(cache);
+                            
+                            // Verwijder de helft van de oudste entries
+                            const sortedEntries = entries
+                                .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                                .sort((a, b) => a.cachedAt - b.cachedAt);
+                            
+                            const toRemove = Math.floor(entries.length / 2);
+                            for (let i = 0; i < toRemove; i++) {
+                                delete cache[sortedEntries[i].key];
+                            }
+                            
+                            // Probeer opnieuw op te slaan
+                            localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                            console.log(`🧹 Cache verkleind: ${toRemove} entries verwijderd, probeer opnieuw...`);
+                            
+                            // Probeer het nieuwe adres opnieuw op te slaan
+                            const cacheKey = getGeocodeCacheKey(address);
+                            cache[cacheKey] = { lat: lat, lon: lon, cachedAt: Date.now() };
+                            localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                            console.log(`✅ Coördinaten opgeslagen na cleanup`);
+                            return true;
+                        }
+                    } catch (retryError) {
+                        console.error('❌ Cache cleanup gefaald:', retryError);
+                        
+                        // Laatste redmiddel: probeer de cache volledig te wissen en alleen dit adres op te slaan
+                        if (retryError.name === 'QuotaExceededError' || retryError.code === 22) {
+                            try {
+                                console.warn('⚠️ Cache volledig vol, probeer laatste redmiddel cleanup...');
+                                // Verwijder 75% van de oudste entries
+                                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                                if (cacheStr) {
+                                    const cache = JSON.parse(cacheStr);
+                                    const entries = Object.keys(cache);
+                                    const sortedEntries = entries
+                                        .map(key => ({ key, cachedAt: cache[key].cachedAt || 0 }))
+                                        .sort((a, b) => a.cachedAt - b.cachedAt);
+                                    
+                                    const toRemove = Math.floor(entries.length * 0.75);
+                                    for (let i = 0; i < toRemove; i++) {
+                                        delete cache[sortedEntries[i].key];
+                                    }
+                                    
+                                    // Voeg het nieuwe adres toe
+                                    const cacheKey = getGeocodeCacheKey(address);
+                                    cache[cacheKey] = { lat: lat, lon: lon, cachedAt: Date.now() };
+                                    
+                                    localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(cache));
+                                    console.log(`✅ Coördinaten opgeslagen na agressieve cleanup (${toRemove} entries verwijderd)`);
+                                    return true;
+                                }
+                            } catch (finalError) {
+                                console.error('❌ Zelfs agressieve cleanup gefaald:', finalError);
+                            }
+                        }
+                        
+                        // Als zelfs cleanup niet werkt, log een waarschuwing
+                        console.warn('⚠️ Kon cache niet opslaan. Cache is mogelijk vol. Overweeg handmatige cleanup.');
+                    }
+                } else {
+                    console.error('Fout bij opslaan van geocode cache:', error);
+                }
+                return false;
+            }
+        }
+        
+        /**
+         * Wis de geocode cache (optioneel, voor debugging)
+         */
+        function clearGeocodeCache() {
+            try {
+                localStorage.removeItem(GEOCODE_CACHE_KEY);
+                console.log('🗑️ Geocode cache gewist');
+            } catch (error) {
+                console.error('Fout bij wissen van cache:', error);
+            }
+        }
+        
+        /**
+         * Toon cache statistieken (voor debugging)
+         */
+        function getCacheStats() {
+            try {
+                const cacheStr = localStorage.getItem(GEOCODE_CACHE_KEY);
+                if (!cacheStr) {
+                    return { size: 0, entries: 0, sizeKB: '0.00', maxSize: MAX_CACHE_SIZE };
+                }
+                
+                const cache = JSON.parse(cacheStr);
+                const entries = Object.keys(cache);
+                const sizeInBytes = new Blob([cacheStr]).size;
+                
+                return {
+                    entries: entries.length,
+                    size: sizeInBytes,
+                    sizeKB: (sizeInBytes / 1024).toFixed(2),
+                    maxSize: MAX_CACHE_SIZE,
+                    percentage: ((entries.length / MAX_CACHE_SIZE) * 100).toFixed(1)
+                };
+            } catch (error) {
+                console.error('Fout bij ophalen cache stats:', error);
+                return { size: 0, entries: 0, sizeKB: '0.00', maxSize: MAX_CACHE_SIZE, percentage: '0.0' };
+            }
+        }
+        
+        /**
+         * Ververs cache statistieken in de UI
+         */
+        function refreshCacheStats() {
+            const stats = getCacheStats();
+            const statsText = document.getElementById('cacheStatsText');
+            
+            if (stats.entries === 0) {
+                statsText.innerHTML = 'Geen cache entries';
+            } else {
+                const percentage = stats.percentage;
+                const color = percentage > 80 ? '#dc3545' : percentage > 60 ? '#ff9800' : 'var(--dark-teal)';
+                statsText.innerHTML = `
+                    <strong>${stats.entries}</strong> entries in cache (${stats.sizeKB} KB) 
+                    <span style="color: ${color};">(${percentage}% van maximum ${stats.maxSize})</span>
+                `;
+            }
+            
+            showMessage('cacheMessage', 'Statistieken ververst', 'success');
+            setTimeout(() => {
+                document.getElementById('cacheMessage').innerHTML = '';
+            }, 2000);
+        }
+        
+        /**
+         * Wis cache met bevestiging
+         */
+        function clearCacheWithConfirm() {
+            if (confirm('Weet je zeker dat je de cache wilt wissen? Alle opgeslagen geocode data wordt verwijderd en moet opnieuw worden opgehaald.')) {
+                clearGeocodeCache();
+                refreshCacheStats();
+                showMessage('cacheMessage', '✅ Cache gewist! Adressen worden bij volgende keer opnieuw gegeocodeerd.', 'success');
+            }
+        }
+
+        /**
+         * Laad gedeelde adressen vanuit GitHub
+         */
+        async function loadSharedAddresses() {
+            const sharedAddressesUrl = getSharedAddressesUrl();
+            const statusDiv = document.getElementById('sharedAddressesStatus');
+
+            console.log('loadSharedAddresses aangeroepen, URL:', sharedAddressesUrl);
+
+            if (sharedAddressesUrl) {
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `⏳ Gedeelde adressen worden geladen...<br><small style="font-size: 0.75rem; opacity: 0.7;">URL: ${sharedAddressesUrl}</small>`;
+                
+                try {
+                    console.log('Probeer gedeelde adressen te laden van:', sharedAddressesUrl);
+                    const success = await addressManager.loadSharedAddresses(sharedAddressesUrl);
+                    
+                    console.log('Load resultaat:', success);
+                    console.log('Aantal gedeelde adressen:', addressManager.getSharedAddresses().length);
+                    
+                    if (success) {
+                        const sharedAddresses = addressManager.getSharedAddresses();
+                        const count = sharedAddresses.length;
+                        
+                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
+                        statusDiv.style.color = 'var(--light-turquoise)';
+                        
+                        // Update UI en kaart
+                        updateSavedAddressesList();
+                        updateBUFilter();
+                        updateMap();
+                    } else {
+                        console.error('Gedeelde adressen niet gevonden. Controleer de URL:', sharedAddressesUrl);
+                        statusDiv.innerHTML = `⚠️ Gedeelde adressen niet gevonden<br><small style="font-size: 0.75rem;">Controleer of de URL klopt: ${sharedAddressesUrl}</small>`;
+                        statusDiv.style.color = '#ff9800';
+                    }
+                } catch (error) {
+                    console.error('Fout bij laden gedeelde adressen:', error);
+                    statusDiv.innerHTML = `⚠️ Fout bij laden gedeelde adressen<br><small style="font-size: 0.75rem;">${error.message}</small>`;
+                    statusDiv.style.color = '#ff9800';
+                }
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = '💡 Tip: Upload adressen.json naar GitHub voor gedeelde lijst';
+                statusDiv.style.color = 'var(--gray)';
+            }
+        }
+
+        /**
+         * Haal de URL voor gedeelde adressen op
+         */
+        function getSharedAddressesUrl() {
+            // OPTIE 1: Lokale adressen.json gebruiken
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+                const localUrl = './adressen.json';
+                console.log('🔧 Lokale modus: gebruik lokale adressen.json:', localUrl);
+                return localUrl;
+            }
+            
+            // OPTIE 2: Automatisch detecteren (werkt op GitHub Pages)
+            if (window.location.hostname.includes('github.io')) {
+                const hostnameParts = window.location.hostname.split('.');
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                if (hostnameParts.length > 0 && pathParts.length > 0) {
+                    const username = hostnameParts[0];
+                    const repoName = pathParts[0];
+                    return `https://raw.githubusercontent.com/${username}/${repoName}/main/adressen.json`;
+                }
+            }
+            
+            // OPTIE 3: Probeer uit localStorage (voor handmatige configuratie)
+            const manualUrl = localStorage.getItem('sharedAddressesUrl');
+            if (manualUrl) {
+                return manualUrl;
+            }
+            
+            // OPTIE 4: Geen gedeelde lijst
+            return null;
+        }
+
+        /**
+         * Stel handmatig een gedeelde adressen URL in
+         */
+        async function setManualSharedUrl() {
+            const urlInput = document.getElementById('manualSharedUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showMessage('manualUrlMessage', 'Voer een URL in', 'error');
+                return;
+            }
+            
+            localStorage.setItem('sharedAddressesUrl', url);
+            showMessage('manualUrlMessage', 'URL opgeslagen! Adressen worden geladen...', 'success');
+            
+            await loadSharedAddresses();
+        }
+
+        /**
+         * Test een gedeelde adressen URL
+         */
+        async function testSharedUrl() {
+            const urlInput = document.getElementById('manualSharedUrl');
+            const url = urlInput.value.trim() || localStorage.getItem('sharedAddressesUrl');
+            
+            if (!url) {
+                showMessage('manualUrlMessage', 'Voer eerst een URL in', 'error');
+                return;
+            }
+            
+            showMessage('manualUrlMessage', 'URL wordt getest...', 'loading');
+            
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data)) {
+                        localStorage.setItem('sharedAddressesUrl', url);
+                        showMessage('manualUrlMessage', `✅ URL werkt! ${data.length} adres(sen) gevonden.`, 'success');
+                        await loadSharedAddresses();
+                    } else {
+                        showMessage('manualUrlMessage', '⚠️ URL werkt, maar data is geen array', 'error');
+                    }
+                } else {
+                    showMessage('manualUrlMessage', `❌ URL niet gevonden (HTTP ${response.status})`, 'error');
+                }
+            } catch (error) {
+                showMessage('manualUrlMessage', `❌ Fout: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialiseer bij laden
+        window.onload = async () => {
+            // Laad opgeslagen handmatige URL
+            const savedUrl = localStorage.getItem('sharedAddressesUrl');
+            if (savedUrl) {
+                const urlInput = document.getElementById('manualSharedUrl');
+                if (urlInput) {
+                    urlInput.value = savedUrl;
+                }
+            }
+            
+            // Laad gedeelde adressen
+            await loadSharedAddresses();
+            
+            updateSavedAddressesList();
+            updateBUFilter();
+            updateMap();
+            
+            // Setup autocomplete
+            setupAutocomplete('searchAddress', 'autocompleteDropdown');
+            setupAutocomplete('addressFull', 'autocompleteDropdownAdd');
+            
+            // Enter toets support
+            document.getElementById('searchAddress').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchNewAddress();
+                }
+            });
+            document.getElementById('addressFull').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addNewAddress();
+                }
+            });
+        };
+    </script>
 </body>
 </html>
-

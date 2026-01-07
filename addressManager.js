@@ -195,6 +195,17 @@ class AddressManager {
     }
 
     /**
+     * Geef een korte adres string terug voor weergave (alleen postcode + plaats)
+     * @param {Object} address - Adres object
+     */
+    getDisplayAddressString(address) {
+        const parts = [];
+        if (address.postcode) parts.push(address.postcode);
+        if (address.plaats) parts.push(address.plaats);
+        return parts.join(' ');
+    }
+
+    /**
      * Haal alle unieke BU's op uit alle adressen
      */
     getAllBUs() {
@@ -213,4 +224,3 @@ class AddressManager {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AddressManager;
 }
-
