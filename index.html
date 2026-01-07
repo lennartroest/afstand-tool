@@ -1792,7 +1792,7 @@
          * Haal de URL voor gedeelde adressen op
          */
         function getSharedAddressesUrl() {
-            // OPTIE 1: Lokale adressen.json gebruiken
+            // OPTIE 1: Lokale adressen.json gebruiken (localhost, file:// protocol)
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
                 const localUrl = './adressen.json';
                 console.log('🔧 Lokale modus: gebruik lokale adressen.json:', localUrl);
@@ -1810,13 +1810,22 @@
                 }
             }
             
-            // OPTIE 3: Probeer uit localStorage (voor handmatige configuratie)
+            // OPTIE 3: Vercel, Netlify, of andere hosting - gebruik lokale adressen.json
+            if (window.location.hostname.includes('vercel.app') || 
+                window.location.hostname.includes('netlify.app') ||
+                window.location.protocol === 'https:') {
+                const localUrl = './adressen.json';
+                console.log('🌐 Hosted modus (Vercel/Netlify/HTTPS): gebruik lokale adressen.json:', localUrl);
+                return localUrl;
+            }
+            
+            // OPTIE 4: Probeer uit localStorage (voor handmatige configuratie)
             const manualUrl = localStorage.getItem('sharedAddressesUrl');
             if (manualUrl) {
                 return manualUrl;
             }
             
-            // OPTIE 4: Geen gedeelde lijst
+            // OPTIE 5: Geen gedeelde lijst
             return null;
         }
 
