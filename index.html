@@ -1764,11 +1764,8 @@
                     console.log('Aantal gedeelde adressen:', addressManager.getSharedAddresses().length);
                     
                     if (success) {
-                        const sharedAddresses = addressManager.getSharedAddresses();
-                        const count = sharedAddresses.length;
-                        
-                        statusDiv.innerHTML = `✅ ${count} gedeeld(e) adres(sen) geladen`;
-                        statusDiv.style.color = 'var(--light-turquoise)';
+                        // Verberg de status melding na succesvol laden
+                        statusDiv.style.display = 'none';
                         
                         // Update UI en kaart
                         updateSavedAddressesList();
