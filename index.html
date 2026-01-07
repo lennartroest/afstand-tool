@@ -59,6 +59,7 @@
 
         .header-content {
             flex: 1;
+            text-align: right;
         }
 
         .header h1 {
@@ -73,8 +74,23 @@
 
         .main-content {
             display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        .left-column {
+            flex: 0 0 40%;
+            max-width: 40%;
+            display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .card {
@@ -209,7 +225,38 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            height: 600px;
+            height: 800px;
+            position: sticky;
+            top: 20px;
+            margin-top: 0;
+        }
+
+        .right-column-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative;
+        }
+
+        #buFilterCard {
+            min-height: 235px;
+            height: 235px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-bottom: 0;
+        }
+
+        .map-wrapper {
+            margin-top: 0;
+        }
+
+        /* Kaart uitlijnen met Afstanden element: 
+           Afstanden begint na zoekformulier + gap (20px)
+           Wanneer BU filter zichtbaar is, margin-top moet worden aangepast om uit te lijnen
+        */
+        .right-column-wrapper .map-wrapper {
+            margin-top: 40px;
         }
 
         #map {
@@ -336,8 +383,24 @@
             margin-bottom: 20px;
         }
 
-        .map-container {
-            margin-bottom: 20px;
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-column {
+                flex: 1 1 auto;
+                max-width: 100%;
+            }
+            
+            .right-column {
+                flex: 1 1 auto;
+            }
+            
+            .map-container {
+                height: 500px;
+                position: static;
+            }
         }
 
         @media (max-width: 1024px) {
@@ -360,140 +423,149 @@
         </div>
 
         <div class="main-content">
-            <!-- Nieuw Adres Formulier -->
-            <div class="card search-section">
-                <h2>🔍 Nieuw Adres Opzoeken</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end;">
+            <!-- LINKER KOLOM -->
+            <div class="left-column">
+                <!-- Nieuw Adres Formulier -->
+                <div class="card search-section">
+                    <h2>🔍 Nieuw Adres Opzoeken</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: end;">
+                        <div class="form-group">
+                            <label for="searchAddressName">Naam/Label:</label>
+                            <input type="text" id="searchAddressName" placeholder="Bijv: Mijn Locatie">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchAddress">Adres:</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="searchAddress" placeholder="Straat, postcode, plaats" autocomplete="off">
+                                <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="searchNewAddress()" style="margin-top: 15px;">Zoek Adres</button>
+                    <div id="searchMessage"></div>
+                </div>
+
+                <!-- Afstand Tabel -->
+                <div class="distance-table-container">
+                    <h2>📊 Afstanden</h2>
+                    <div id="distanceTableContainer">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p>Voer een nieuw adres in om afstanden te zien</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adresbeheer Card -->
+                <div class="card" style="display: none;">
+                    <h2>📍 Adresbeheer</h2>
+                    
+                    <!-- Gedeelde Adressen Configuratie -->
+                    <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">🔗 Gedeelde Adressenlijst</h3>
+                        <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                            Stel handmatig de GitHub URL in als automatische detectie niet werkt:
+                        </p>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <input type="text" id="manualSharedUrl" placeholder="https://raw.githubusercontent.com/gebruikersnaam/repo/main/adressen.json" style="font-size: 0.9rem;">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" onclick="setManualSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                                URL Opslaan
+                            </button>
+                            <button class="btn btn-secondary" onclick="testSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                                Test URL
+                            </button>
+                        </div>
+                        <div id="manualUrlMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                    </div>
+                    
+                    <!-- Excel Upload Sectie -->
+                    <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
+                        <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">📁 Excel Bestand Uploaden</h3>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
+                            Upload een Excel bestand met kolommen: <strong>Naam/Label</strong>, <strong>Volledig Adres</strong> en optioneel <strong>BU</strong> (Business Unit)
+                        </p>
+                        <div class="form-group">
+                            <label for="excelFile">Selecteer Excel bestand (.xlsx of .xls):</label>
+                            <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 8px;">
+                        </div>
+                        <button class="btn btn-primary" onclick="uploadExcelFile()" id="uploadBtn">
+                            📤 Upload en Importeer Adressen
+                        </button>
+                        <div id="excelUploadMessage"></div>
+                        <div id="excelProgress" style="margin-top: 15px; display: none;">
+                            <div style="background: #e0e0e0; border-radius: 8px; height: 20px; overflow: hidden;">
+                                <div id="excelProgressBar" style="background: var(--light-turquoise); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                            </div>
+                            <p id="excelProgressText" style="margin-top: 5px; color: var(--gray); font-size: 0.9rem;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Handmatig Adres Toevoegen -->
+                    <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">✏️ Handmatig Adres Toevoegen</h3>
                     <div class="form-group">
-                        <label for="searchAddressName">Naam/Label:</label>
-                        <input type="text" id="searchAddressName" placeholder="Bijv: Mijn Locatie">
+                        <label for="addressName">Naam/Label:</label>
+                        <input type="text" id="addressName" placeholder="Bijv: Kantoor Amsterdam">
                     </div>
                     <div class="form-group">
-                        <label for="searchAddress">Adres:</label>
+                        <label for="addressFull">Volledig Adres:</label>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="searchAddress" placeholder="Straat, postcode, plaats" autocomplete="off">
-                            <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                            <input type="text" id="addressFull" placeholder="Straat, huisnummer, postcode, plaats" autocomplete="off">
+                            <div id="autocompleteDropdownAdd" class="autocomplete-dropdown"></div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="searchNewAddress()">Zoek Adres</button>
-                </div>
-                <div id="searchMessage"></div>
-            </div>
-
-            <!-- BU Filter Sectie -->
-            <div class="card" id="buFilterCard" style="display: none;">
-                <h2>🏢 Filter op Business Unit (BU)</h2>
-                <div id="buFilterButtons" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-                    <!-- BU filter knoppen worden hier dynamisch toegevoegd -->
-                </div>
-            </div>
-
-            <!-- Kaart Container -->
-            <div class="map-container">
-                <div id="map"></div>
-            </div>
-
-            <!-- Afstand Tabel -->
-            <div class="distance-table-container">
-                <h2>📊 Afstanden</h2>
-                <div id="distanceTableContainer">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <p>Voer een nieuw adres in om afstanden te zien</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Adresbeheer Card -->
-            <div class="card" style="display: none;">
-                <h2>📍 Adresbeheer</h2>
-                
-                <!-- Gedeelde Adressen Configuratie -->
-                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">🔗 Gedeelde Adressenlijst</h3>
-                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
-                        Stel handmatig de GitHub URL in als automatische detectie niet werkt:
-                    </p>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="manualSharedUrl" placeholder="https://raw.githubusercontent.com/gebruikersnaam/repo/main/adressen.json" style="font-size: 0.9rem;">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-secondary" onclick="setManualSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
-                            URL Opslaan
-                        </button>
-                        <button class="btn btn-secondary" onclick="testSharedUrl()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
-                            Test URL
-                        </button>
-                    </div>
-                    <div id="manualUrlMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
-                </div>
-                
-                <!-- Excel Upload Sectie -->
-                <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
-                    <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">📁 Excel Bestand Uploaden</h3>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
-                        Upload een Excel bestand met kolommen: <strong>Naam/Label</strong>, <strong>Volledig Adres</strong> en optioneel <strong>BU</strong> (Business Unit)
-                    </p>
-                    <div class="form-group">
-                        <label for="excelFile">Selecteer Excel bestand (.xlsx of .xls):</label>
-                        <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 8px;">
-                    </div>
-                    <button class="btn btn-primary" onclick="uploadExcelFile()" id="uploadBtn">
-                        📤 Upload en Importeer Adressen
-                    </button>
-                    <div id="excelUploadMessage"></div>
-                    <div id="excelProgress" style="margin-top: 15px; display: none;">
-                        <div style="background: #e0e0e0; border-radius: 8px; height: 20px; overflow: hidden;">
-                            <div id="excelProgressBar" style="background: var(--light-turquoise); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                    <button class="btn btn-primary" onclick="addNewAddress()">Adres Toevoegen</button>
+                    <div id="addressMessage"></div>
+                    
+                    <!-- Cache Beheer Sectie -->
+                    <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">💾 Cache Beheer</h3>
+                        <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
+                            De cache slaat gegeocodeerde adressen op om sneller te laden. Als de cache te vol raakt, kunnen adressen verloren gaan.
+                        </p>
+                        <div id="cacheStats" style="margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">
+                            <span id="cacheStatsText">Cache wordt geladen...</span>
                         </div>
-                        <p id="excelProgressText" style="margin-top: 5px; color: var(--gray); font-size: 0.9rem;"></p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" onclick="refreshCacheStats()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                                🔄 Ververs Statistieken
+                            </button>
+                            <button class="btn btn-danger" onclick="clearCacheWithConfirm()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                                🗑️ Cache Wissen
+                            </button>
+                        </div>
+                        <div id="cacheMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
                     </div>
                 </div>
 
-                <!-- Handmatig Adres Toevoegen -->
-                <h3 style="color: var(--dark-teal); margin-bottom: 15px; font-size: 1.1rem;">✏️ Handmatig Adres Toevoegen</h3>
-                <div class="form-group">
-                    <label for="addressName">Naam/Label:</label>
-                    <input type="text" id="addressName" placeholder="Bijv: Kantoor Amsterdam">
-                </div>
-                <div class="form-group">
-                    <label for="addressFull">Volledig Adres:</label>
-                    <div class="autocomplete-wrapper">
-                        <input type="text" id="addressFull" placeholder="Straat, huisnummer, postcode, plaats" autocomplete="off">
-                        <div id="autocompleteDropdownAdd" class="autocomplete-dropdown"></div>
+                <!-- Opgeslagen Adressen Card -->
+                <div class="card" style="display: none;">
+                    <h2>💾 Opgeslagen Adressen</h2>
+                    <div id="savedAddressesList" class="address-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📍</div>
+                            <p>Nog geen adressen opgeslagen</p>
+                        </div>
                     </div>
-                </div>
-                <button class="btn btn-primary" onclick="addNewAddress()">Adres Toevoegen</button>
-                <div id="addressMessage"></div>
-                
-                <!-- Cache Beheer Sectie -->
-                <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e0e0e0; background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                    <h3 style="color: var(--dark-teal); margin-bottom: 10px; font-size: 1rem;">💾 Cache Beheer</h3>
-                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 10px;">
-                        De cache slaat gegeocodeerde adressen op om sneller te laden. Als de cache te vol raakt, kunnen adressen verloren gaan.
-                    </p>
-                    <div id="cacheStats" style="margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">
-                        <span id="cacheStatsText">Cache wordt geladen...</span>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-secondary" onclick="refreshCacheStats()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
-                            🔄 Ververs Statistieken
-                        </button>
-                        <button class="btn btn-danger" onclick="clearCacheWithConfirm()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
-                            🗑️ Cache Wissen
-                        </button>
-                    </div>
-                    <div id="cacheMessage" style="margin-top: 10px; font-size: 0.85rem;"></div>
                 </div>
             </div>
 
-            <!-- Opgeslagen Adressen Card -->
-            <div class="card" style="display: none;">
-                <h2>💾 Opgeslagen Adressen</h2>
-                <div id="savedAddressesList" class="address-list">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📍</div>
-                        <p>Nog geen adressen opgeslagen</p>
+            <!-- RECHTER KOLOM (KAART) -->
+            <div class="right-column">
+                <div class="right-column-wrapper">
+                    <!-- BU Filter Sectie -->
+                    <div class="card" id="buFilterCard" style="display: none;">
+                        <h2>🏢 Filter op Business Unit (BU)</h2>
+                        <div id="buFilterButtons" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                            <!-- BU filter knoppen worden hier dynamisch toegevoegd -->
+                        </div>
+                    </div>
+
+                    <div class="map-wrapper">
+                        <div class="map-container">
+                            <div id="map"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -870,8 +942,6 @@
                 return;
             }
 
-            showMessage('searchMessage', 'Adres wordt opgezocht...', 'loading');
-
             const geocodeResult = await geocodeAddress(addressString);
             
             if (!geocodeResult) {
@@ -973,7 +1043,6 @@
             ]);
             map.fitBounds(bounds.pad(0.1));
 
-            showMessage('searchMessage', 'Adres gevonden! Afstanden berekend.', 'success');
         }
 
         /**
